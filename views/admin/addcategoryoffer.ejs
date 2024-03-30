@@ -1,0 +1,139 @@
+<%- include('../adminlayout/header.ejs') %>
+
+<div class="content-main">
+  <div class="row"> 
+    <div class="col-12">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h4>Add Category</h4>
+        </div>
+        <div class="card-body">
+          <% if (typeof error !== 'undefined') { %>
+            <% console.log("Error:", error); %>
+          <% } %>
+          <% if (success) { %>
+            <script>
+              console.log("Inside success block");
+              Swal.fire('Success', '<%= success %>', 'success');
+            </script>
+          <% } else if (error) { %>
+            <script>
+              console.log("Inside error block");
+              Swal.fire('Error', '<%= error %>', 'error');
+            </script>
+          <% } %>
+          
+          <!-- Category form -->
+          <form id="categoryOfferForm" action="/admin/categoryoffer" method="post">
+            <div class="mb-3">
+              <label for="categorySelect" class="form-label">Select Category</label>
+              <select class="form-select" id="categorySelect" name="categoryId" >
+                <option value="">Select a category</option>
+                <% categories.forEach(category => { %>
+                  <option value="<%= category._id %>"><%= category.categoryName %></option>
+                <% }) %>
+              </select>
+              <div class="invalid-feedback">Please select a category.</div>
+            </div>
+            <div class="mb-3">
+              <label for="offer" class="form-label">Offer (in percentage)</label>
+              <input type="number" class="form-control" id="offer" name="categoryOffer" />
+              <div class="invalid-feedback">Please enter a valid offer percentage greater than zero.</div>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+
+          <!-- Category offers table -->
+          <div class="row mt-4">
+            <div class="col-12">
+              <div class="card mb-4">
+                <div class="card-header">
+                  <h4>Category Offers</h4>
+                </div>
+                <div class="card-body">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Category</th>
+                        <th>Offer (%)</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% categoryOffers.forEach(offer => { %>
+                        <tr>
+                          <td><%= offer.category ? offer.category.categoryName : 'Category Not Found' %></td>
+                          <td><%= offer.categoryOffer %></td>
+                          <td>
+                            <button class="btn btn-delete btn-danger" onclick="deleteCategoryOffer('<%= offer._id %>')">Delete</button>
+                          </td>
+                        </tr>
+                      <% }) %>                      
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../adminlayout/footer.ejs') %>
+
+<!-- SweetAlert CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script>
+  document.getElementById('categoryOfferForm').addEventListener('submit', function(event) {
+    var categoryId = document.getElementById('categorySelect').value;
+    var categoryOffer = document.getElementById('offer').value;
+
+    if (!categoryId || !categoryOffer || parseFloat(categoryOffer) <= 0) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (!categoryId) {
+        document.getElementById('categorySelect').classList.add('is-invalid');
+      } else {
+        document.getElementById('categorySelect').classList.remove('is-invalid');
+      }
+
+      if (!categoryOffer || parseFloat(categoryOffer) <= 0) {
+        document.getElementById('offer').classList.add('is-invalid');
+      } else {
+        document.getElementById('offer').classList.remove('is-invalid');
+      }
+    } else {
+      document.getElementById('categorySelect').classList.remove('is-invalid');
+      document.getElementById('offer').classList.remove('is-invalid');
+    }
+  });
+
+  $(document).ready(function() {
+   // Define deleteCategoryOffer function outside of the $(document).ready() block
+window.deleteCategoryOffer = function(offerId) {
+  Swal.fire({
+    title: 'Are you sure?',
+    text: 'You will not be able to recover this offer!',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Yes, delete it!'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      var form = document.getElementById('deleteCategoryOfferForm');
+      if (form) {
+        form.setAttribute('action', '/admin/categoryoffer/delete/' + offerId);
+        form.submit();
+      } else {
+        console.error('Form not found');
+      }
+    }
+  });
+};
+
+  });
+</script>

@@ -1,0 +1,49 @@
+
+<%- include('../userlayout/header.ejs') %>
+
+  <div class="page-content">
+    <section class="section-padding">
+      <div class="container">
+        <div class="row">
+          <div class="col-12 col-lg-6 col-xl-5 col-xxl-5 mx-auto">
+            <div class="card rounded-0">
+              <div class="card-body p-4">
+                <h4 class="mb-0 fw-bold text-center">OTP Verification</h4>
+                <hr>
+  
+                <!-- Display email and message -->
+                <p>Email: <%= email %></p>
+              
+  
+                <!-- OTP form -->
+                <form action="/verify" method="post">
+                  <div class="row g-4">
+                    <div class="col-12">
+                      <label for="exampleName" class="form-label">Enter OTP</label>
+                      <input type="text" name="otp" class="form-control rounded-0" id="name">
+                    </div>
+                    <div class="col-12">
+                      <button type="submit" class="btn btn-dark rounded-0 btn-ecomm w-100">Submit</button>
+                    </div>
+                  </div><!---end row-->
+                  
+                </form>
+  
+                <!-- Resend OTP form (if needed) -->
+                <!--
+                <form action="resend" method="post" class="mb-1">
+                  <button type="submit" class="btn btn-dark rounded-0 btn-ecomm w-100">Resend OTP</button>
+                </form>
+                -->
+              </div>
+            </div>
+          </div>
+        </div><!--end row-->
+      </div>
+    </section>
+  </div>
+
+
+
+
+   <%- include('../userlayout/footer.ejs') %>

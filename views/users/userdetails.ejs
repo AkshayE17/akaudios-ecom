@@ -1,0 +1,82 @@
+<%- include('../userlayout/header.ejs') %>
+
+
+
+<!--start page content-->
+<div class="page-content">
+
+
+
+  <!--start product details-->
+  <section class="section-padding">
+   <div class="container">
+      <div class="d-flex align-items-center px-3 py-2 border mb-4">
+       <div class="text-start">
+         <h4 class="mb-0 h4 fw-bold">Account - Profile</h4>
+      </div>
+     </div>
+     <div class="btn btn-dark btn-ecomm d-xl-none position-fixed top-50 start-0 translate-middle-y"  data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbarFilter"><span><i class="bi bi-person me-2"></i>Account</span></div>
+      <div class="row">
+         <div class="col-12 col-xl-3 filter-column">
+             <nav class="navbar navbar-expand-xl flex-wrap p-0">
+               <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbarFilter" aria-labelledby="offcanvasNavbarFilterLabel">
+                 <div class="offcanvas-header">
+                   <h5 class="offcanvas-title mb-0 fw-bold text-uppercase" id="offcanvasNavbarFilterLabel">Account</h5>
+                   <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                 </div>
+                 <div class="offcanvas-body account-menu">
+                  <div class="list-group w-100 rounded-0">
+                    <a href="/userdashboard" class="list-group-item "><i class="bi bi-house-door me-2"></i>Dashboard</a>
+                    <a href="/order/viewOrder" class="list-group-item"><i class="bi bi-basket3 me-2"></i>Orders</a>
+                    <a href="/userdetails" class="list-group-item active"><i class="bi bi-person me-2"></i>Profile</a>
+                    <a href="/editdetails" class="list-group-item"><i class="bi bi-pencil me-2"></i>Edit Profile</a>
+                    <a href="/updatepassword" class="list-group-item"><i class="bi bi-pencil me-2"></i>Change Password</a>
+                    <a href="/address/loadSavedaddress" class="list-group-item"><i class="bi bi-pin-map me-2"></i>Saved Address</a>
+                    <a href="/cart/wishlist" class="list-group-item"><i class="bi bi-suit-heart me-2"></i>Wishlist</a>
+                    <a href="/wallet" class="list-group-item"><i class="bi bi-basket3 me-2"></i>wallet</a>
+                    <a href="/logout" class="list-group-item"><i class="bi bi-power me-2"></i>Logout</a>
+                  </div>
+                </div>
+               </div>
+           </nav>
+         </div>
+         <div class="col-12 col-xl-9">
+          <div class="card rounded-0">
+            <div class="card-body p-lg-5">
+              <h5 class="mb-0 fw-bold">Profile Details</h5>
+              <hr>
+              <div class="table-responsive">
+                <table class="table table-striped">
+                  <tbody>
+                    <tr>
+                      <td>Full Name</td>
+                      <td><%= user.name %></td>
+                    </tr>
+                    <tr>
+                      <td>Mobile Number</td>
+                      <td><%= user.mobile %></td>
+                    </tr>
+                    <tr>
+                      <td>Email ID</td>
+                      <td><%= user.email %></td>
+                    </tr>
+                    <!-- Add more user details as needed -->
+                  </tbody>
+                </table>
+              </div>
+              <div class="">
+                <a href="/editdetails" class="btn btn-outline-dark btn-ecomm px-5"><i class="bi bi-pencil me-2"></i>Edit</a>
+            </div>
+            
+            </div>
+          </div>
+         </div>
+      </div><!--end row-->
+   </div>
+ </section>
+  <!--start product details-->
+</div>
+ <!--end page content-->
+
+
+  <%- include('../userlayout/footer.ejs') %>

@@ -1,0 +1,216 @@
+<%- include('../adminlayout/header.ejs') %>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Dashboard</h2>
+            <p>Whole data about your business here</p>
+        </div>
+        <div>
+            <a href="/admin/sales" class="btn btn-primary"><i class="text-muted material-icons md-post_add"></i>Sales report</a>
+        </div>
+    </div>
+    <div class="row">
+        <!-- Revenue Card -->
+        <div class="col-lg-3">  
+            <div class="card card-body mb-4">
+                <article class="icontext">
+                    <span class="icon icon-sm rounded-circle bg-primary-light"><i class="text-primary material-icons md-monetization_on"></i></span>
+                    <div class="text">
+                        <h6 class="mb-1 card-title">Revenue</h6>
+                        <span>₹<%= totalRevenue.toFixed(2) %></span>
+                        <span class="text-sm">Shipping fees are not included</span>
+                    </div>
+                </article>
+            </div>
+        </div>
+        <!-- Orders Card -->
+        <div class="col-lg-3">
+            <div class="card card-body mb-4">
+                <article class="icontext">
+                    <span class="icon icon-sm rounded-circle bg-success-light"><i class="text-success material-icons md-local_shipping"></i></span>
+                    <div class="text">
+                        <h6 class="mb-1 card-title">Orders</h6>
+                        <span><%= totalOrders %></span>
+                        <span class="text-sm">Excluding orders in transit</span>
+                    </div>
+                </article>
+            </div>
+        </div>
+        <!-- Products Card -->
+        <div class="col-lg-3">
+            <div class="card card-body mb-4">
+                <article class="icontext">
+                    <span class="icon icon-sm rounded-circle bg-warning-light"><i class="text-warning material-icons md-qr_code"></i></span>
+                    <div class="text">
+                        <h6 class="mb-1 card-title">Products</h6>
+                        <span><%= totalProductsSold %></span>
+                        <span class="text-sm">In <%= totalCategories %> Categories</span>
+                    </div>
+                </article>
+            </div>
+        </div>
+
+        <div class="col-lg-3">
+            <div class="card card-body mb-4">
+                <article class="icontext">
+                    <span class="icon icon-sm rounded-circle bg-info-light"><i class="text-info material-icons md-shopping_basket"></i></span>
+                    <div class="text">
+                        <h6 class="mb-1 card-title">Monthly Earning</h6>
+                        <span>₹<%= monthlyEarnings.toFixed(2) %></span>
+                        <span class="text-sm">Based in your local time.</span>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card mb-4">
+                <article class="card-body">
+                    <h5 class="card-title">Sale statistics</h5>
+                    <canvas id="myChart" height="120px"></canvas>
+                </article>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="revenueOption">Select Time Period:</label>
+                <select class="form-select" id="revenueOption">
+                    <option value="daily">Daily</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="yearly">Yearly</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content-main">
+    <div class="content-header">
+        <h2 class="content-title card-title">TOP 5 CATEGORIES</h2>
+    </div>
+    <div class="row">
+
+        <% categories.forEach(category => { %>
+            <div class="col-lg-3">
+                <div class="card card-body mb-4">
+                    <article class="icontext">
+                        <div class="text">
+                            <h6 class="mb-1 card-title"><%= category.categoryName %></h6>
+                            <span><%= category.productCount %> Products</span>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        <% }); %>
+    </div>
+</section>
+
+<section class="content-main">
+    <div class="content-header">
+        <h2 class="content-title card-title">Top 5 Products Ordered</h2>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Product Name</th>
+                    <th scope="col">Total Ordered</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% topProducts.forEach(product => { %>
+                    <tr>
+                      <td><%= product.productName %></td>
+                      <td><%= product.totalOrdered %></td>
+                    </tr>
+                  <% }); %>
+                </tbody>
+              </table>
+        </div>
+    </div>
+</section>
+
+
+  
+<%- include('../adminlayout/footer.ejs') %>
+
+<script>
+$(document).ready(function() {
+    var myChart = new Chart(document.getElementById('myChart').getContext('2d'), {
+    type: 'bar',
+    data: {},
+    options: {}
+});
+
+    var dailyRevenue = JSON.parse('<%- dailyRevenue %>');
+    var monthlyRevenue = JSON.parse('<%- monthlyRevenue %>');
+    var yearlyRevenue = JSON.parse('<%- yearlyRevenue %>');
+
+    console.log("daily:",dailyRevenue);
+    console.log("monthly:",monthlyRevenue);
+    console.log("yearly:",yearlyRevenue);
+
+    $("#revenueOption").change(function() {
+        var selectedOption = $(this).val();
+        var dataToRender;
+
+        if (selectedOption === "daily") {
+            dataToRender = dailyRevenue;
+        } else if (selectedOption === "monthly") {
+            dataToRender = monthlyRevenue;
+        } else if (selectedOption === "yearly") {
+            dataToRender = yearlyRevenue;
+        }
+
+        dataToRender = Object.assign({}, ...dataToRender);
+
+        renderChart(dataToRender);
+    });
+
+    function renderChart(data) {
+        var ctx = document.getElementById('myChart').getContext('2d');
+
+
+        var labels = Object.keys(data); 
+        var revenueValues = Object.values(data);
+
+        if (myChart) {
+            myChart.destroy();
+        }
+
+        myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels, 
+                datasets: [{
+                    label: 'Revenue',
+                    data: revenueValues,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    $("#revenueOption").val('daily').trigger('change');
+});
+
+</script>

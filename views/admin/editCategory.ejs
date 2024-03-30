@@ -1,0 +1,94 @@
+<%- include('../adminlayout/header.ejs') %>
+
+
+    
+    
+    
+    <!-- <script>
+        function addCategoryFunction(event) {
+            event.preventDefault();
+    
+            // Fetch values from the form
+            const categoryName = document.getElementById('newCategoryName').value;
+            const categoryImage = document.getElementById('newCategoryImage').value;
+    
+            // Use the values to add a new category (you can use AJAX to send a request to the server)
+    
+            // Optional: Clear the form fields after adding the category
+            document.getElementById('newCategoryName').value = '';
+            document.getElementById('newCategoryImage').value = '';
+        }
+    </script> -->
+    
+    <section class="content-main">
+      <div class="content-header">
+          <div class="row align-items-center">
+              <div class="col-md-4"></div>
+  
+              <!-- Display success or error messages if any -->
+              <% if (typeof success !== 'undefined' && msg) { %>
+                  <div class="alert <% if (success) { %>alert-success<% } else { %>alert-danger<% } %>" role="alert">
+                      <%= msg %>
+                  </div>
+              <% } %>
+  
+              <div class="col-md-4 text-center">
+                  <h2 class="content-title card-title">Edit Category</h2>
+              </div>
+  
+              <div class="col-md-4 text-center">
+                  <!-- Use the category data to pre-fill the form if category is defined -->
+                  <% if (category) { %>
+                    <form id="editCategoryForm" action="/admin/category/editCategory/<%= category._id %>" method="post" enctype="multipart/form-data" class="p-5 border rounded" style="width: 400px;">
+                      <div class="mb-3">
+                          <label for="editCategoryName" class="form-label">Category Name</label>
+                          <input type="text" class="form-control" name="editCategoryName" value="<%= category.categoryName %>" required>
+                      </div>
+                      <div class="mb-3">
+                          <label for="editCategoryImage" class="form-label">Category Image</label>
+                          <div class="input-group">
+                              <input type="file" class="form-control" name="editCategoryImage" accept="image/*">
+                          </div>
+                      </div>
+                      <div class="mb-3 text-center">
+                          <button type="submit" class="btn btn-primary">Update Category</button>
+                      </div>
+                  </form>
+                  
+                  <% } else { %>
+                      <p>No category found.</p>
+                  <% } %>
+              </div>
+          </div>
+      </div>
+  </section>
+  
+
+    
+    
+    
+    
+    
+    <footer class="main-footer font-xs">
+        <div class="row pb-30 pt-15">
+            <div class="col-sm-6">
+                <script>
+                    document.write(new Date().getFullYear());
+                </script>
+                &copy; Nest - HTML Ecommerce Template .
+            </div>
+            <div class="col-sm-6">
+                <div class="text-sm-end">All rights reserved</div>
+            </div>
+        </div>
+    </footer>
+</main>
+<script src="/js/vendors/jquery-3.6.0.min.js"></script>
+<script src="/js/vendors/bootstrap.bundle.min.js"></script>
+<script src="/js/vendors/select2.min.js"></script>
+<script src="/js/vendors/perfect-scrollbar.js"></script>
+<script src="/js/vendors/jquery.fullscreen.min.js"></script>
+<!-- Main Script -->
+<script src="/js/main.js?v=1.1" type="text/javascript"></script>
+
+<%- include('../adminlayout/footer.ejs') %>

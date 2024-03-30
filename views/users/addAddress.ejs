@@ -1,0 +1,160 @@
+<%- include('../userlayout/header.ejs') %>
+
+<!--start page content-->
+<div class="page-content">
+
+  <!--start product details-->
+  <section class="section-padding">
+    <div class="container">
+      <div class="d-flex align-items-center px-3 py-2 border mb-4">
+        <div class="text-start">
+          <h4 class="mb-0 h4 fw-bold">Account - Addresses</h4>
+        </div>
+      </div>
+      <div class="btn btn-dark btn-ecomm d-xl-none position-fixed top-50 start-0 translate-middle-y" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbarFilter"><span><i class="bi bi-person me-2"></i>Account</span></div>
+      <div class="row">
+        <div class="col-12 col-xl-3 filter-column">
+          <!-- Sidebar Menu -->
+        </div>
+        <!-- Form for adding new address -->
+        <div class="col">
+          <div class="container">
+            <div class="row">
+              <div class="col">
+                <h5 class="mb-3 fw-bold">Add New Address</h5>
+                <form id="addAddressForm" action="/address/addAddress?source=<%= source %>" method="POST" onsubmit="return validateForm()">
+                  <div class="row mb-3">
+                    <div class="col">
+                      <input type="text" class="form-control" name="name" placeholder="Name">
+                      <div id="nameError" class="error-message text-danger"></div>
+                    </div>
+                    <div class="col">
+                      <input type="text" class="form-control" name="mobileNo" placeholder="Mobile No">
+                      <div id="mobileError" class="error-message text-danger"></div>
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <input type="text" class="form-control" name="pinCode" placeholder="Pin Code">
+                    <div id="pinCodeError"class="error-message text-danger"></div>
+                  </div>
+                  <div class="mb-3">
+                    <input type="text" class="form-control" name="address" placeholder="Address (House No, Building, Street, Area)">
+                    <div id="addressError" class="error-message text-danger"></div>
+                  </div>
+                  <div class="mb-3">
+                    <input type="text" class="form-control" name="localityTown" placeholder="Locality/Town">
+                    <div id="localityTownError" class="error-message text-danger"></div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col">
+                      <input type="text" class="form-control" name="city" placeholder="City / District">
+                      <div id="cityError" class="error-message text-danger"></div>
+                    </div>
+                    <div class="col">
+                      <input type="text" class="form-control" name="state" placeholder="State">
+                      <div id="stateError" class="error-message text-danger"></div>
+                    </div>
+                  </div>
+                  <div class="form-check mb-3">
+                    <input class="form-check-input" type="radio" name="defaultAddress" id="defaultAddress" value="true" <% if (addresses.length === 0) { %> checked <% } %>>
+                    <label class="form-check-label" for="defaultAddress">
+                      Make it default
+                    </label>
+                  </div>
+                  
+                  <button type="submit" class="btn btn-dark btn-ecomm">Add Address</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<%- include('../userlayout/footer.ejs') %>
+
+<script>
+  function validateForm() {
+    var name = document.querySelector('[name="name"]').value.trim();
+    var mobileNo = document.querySelector('[name="mobileNo"]').value.trim();
+    var pinCode = document.querySelector('[name="pinCode"]').value.trim();
+    var address = document.querySelector('[name="address"]').value.trim();
+    var localityTown = document.querySelector('[name="localityTown"]').value.trim();
+    var city = document.querySelector('[name="city"]').value.trim();
+    var state = document.querySelector('[name="state"]').value.trim();
+
+    var nameError = document.getElementById("nameError");
+    var mobileError = document.getElementById("mobileError");
+    var pinCodeError = document.getElementById("pinCodeError");
+    var addressError = document.getElementById("addressError");
+    var localityTownError = document.getElementById("localityTownError");
+    var cityError = document.getElementById("cityError");
+    var stateError = document.getElementById("stateError");
+
+    var isValid = true;
+
+    // Name validation
+    if (!name) {
+      nameError.innerHTML = "Please enter your name.";
+      isValid = false;
+    } else {
+      nameError.innerHTML = "";
+    }
+
+    // Mobile validation
+    if (!mobileNo) {
+      mobileError.innerHTML = "Please enter your mobile number.";
+      isValid = false;
+    } else {
+      mobileError.innerHTML = "";
+    }
+
+    // Pin Code validation
+    if (!pinCode) {
+      pinCodeError.innerHTML = "Please enter pin code.";
+      isValid = false;
+    } else {
+      pinCodeError.innerHTML = "";
+    }
+
+    // Address validation
+    if (!address) {
+      addressError.innerHTML = "Please enter your address.";
+      isValid = false;
+    } else {
+      addressError.innerHTML = "";
+    }
+
+    // Locality/Town validation
+    if (!localityTown) {
+      localityTownError.innerHTML = "Please enter your locality/town.";
+      isValid = false;
+    } else {
+      localityTownError.innerHTML = "";
+    }
+
+    // City validation
+    if (!city) {
+      cityError.innerHTML = "Please enter your city/district.";
+      isValid = false;
+    } else {
+      cityError.innerHTML = "";
+    }
+
+    // State validation
+    if (!state) {
+      stateError.innerHTML = "Please enter your state.";
+      isValid = false;
+    } else {
+      stateError.innerHTML = "";
+    }
+
+    if (!isValid) {
+      event.preventDefault();
+    }
+
+    return isValid;
+  }
+</script>

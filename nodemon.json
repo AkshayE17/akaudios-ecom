@@ -1,0 +1,5 @@
+{
+  "ignore": ["*.css"],
+  "ext": "js json ejs",
+  "exec": "node --experimental-json-modules"
+}

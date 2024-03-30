@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AK AUDIOS - Order Invoice</title>
+  <!-- Add your CSS stylesheets and any other meta tags or links to external resources here -->
+  <style>
+    /* Add your custom CSS styles here */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+      color: #495057;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .order-card {
+      margin-bottom: 40px;
+    }
+
+    .order-details {
+      border-bottom: 1px solid #dee2e6;
+      padding-bottom: 20px;
+      margin-bottom: 20px;
+    }
+
+    .order-details h3 {
+      margin-bottom: 10px;
+    }
+
+    .order-details p {
+      margin-bottom: 5px;
+    }
+
+    .product-details {
+      border-bottom: 1px solid #dee2e6;
+      padding-bottom: 20px;
+      margin-bottom: 20px;
+    }
+
+    .product-details h3 {
+      margin-bottom: 10px;
+    }
+
+    .product-details table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .product-details th,
+    .product-details td {
+      border: 1px solid #dee2e6;
+      padding: 8px;
+      text-align: left;
+    }
+
+    .payment-method {
+      margin-top: 20px;
+    }
+
+    .total-amount {
+      margin-top: 20px;
+    }
+
+    .footer {
+      margin-top: 30px;
+      text-align: center;
+      color: #6c757d;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header class="section-header">
+      <h1 class="company-name">AK AUDIOS</h1>
+      <h2 class="section-title">Order Invoice</h2>
+    </header>
+
+    <div class="row">
+      <div class="col-lg-8">
+        <% if (order && order.length > 0) { %>
+          <% order.forEach(orderItem => { %>
+            <article class="order-card">
+              <div class="order-details">
+                <!-- User Details -->
+                <section class="user-details">
+                  <h3>User Details</h3>
+                  <p><strong>Name:</strong> <%= orderItem.userId.name %></p>
+                  <p><strong>Email:</strong> <%= orderItem.userId.email %></p>
+                  <p><strong>Phone:</strong> <%= orderItem.userId.mobile %></p>
+                </section>
+
+                <!-- Billing Address -->
+                <section class="billing-address">
+                  <h3>Billing Address</h3>
+                  <% if (orderItem.billingAddress) { %>
+                    <p><strong>Name:</strong> <%= orderItem.billingAddress.name %></p>
+                    <p><strong>Phone:</strong> <%= orderItem.billingAddress.mobileNo %></p>
+                    <p><strong>Address:</strong> <%= orderItem.billingAddress.address %>, <%= orderItem.billingAddress.localityTown %>, <%= orderItem.billingAddress.city %>, <%= orderItem.billingAddress.state %>, <%= orderItem.billingAddress.pinCode %></p>
+                  <% } else { %>
+                    <p>No billing address provided.</p>
+                  <% } %>
+                </section>
+              </div>
+
+              <!-- Product Details -->
+              <section class="product-details">
+                <h3>Product Details</h3>
+                <% if (product) { %>
+                  <table>
+                    <tr>
+                      <th>Name</th>
+                      <th>Quantity</th>
+                      <th>Original Price (₹)</th>
+                      <th>Offer Price (₹)</th>
+                      <th>Payment Method</th>
+                    </tr>
+                    <tr>
+                      <td><%= product.product_id.productName %></td>
+                      <td><%= product.quantity %></td>
+                      <td><%= Math.floor(product.product_id.price) %></td>
+                      <td><%= Math.floor(product.price) %></td>
+                      <td><%= orderItem.payment %></td>
+                    </tr>
+                  </table>
+                <% } else { %>
+                  <p>No product found for this order.</p>
+                <% } %>
+              </section>
+
+              <!-- Total Amount -->
+              <div class="total-amount">
+                <p><strong>Total Amount:</strong> ₹<%= Math.floor(product.price) %></p>
+              </div>
+            </article>
+          <% }); %>
+        <% } else { %>
+          <p>No orders found.</p>
+        <% } %>
+      </div>
+    </div><!-- End Row -->
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>&copy; 2024 AK AUDIOS. All rights reserved.</p>
+    </footer>
+  </div>
+</body>
+
+</html>
+

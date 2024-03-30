@@ -1,0 +1,289 @@
+<%- include('../userlayout/header.ejs') %>
+
+<!--start page content--> 
+<div class="page-content">
+  <!--start breadcrumb-->
+  <div class="py-4 border-bottom">
+    <div class="container">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a href="javascript:;">Home</a></li>
+          <li class="breadcrumb-item"><a href="javascript:;">Checkout</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Payment Method</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+
+  <!--start product details-->
+  <section class="section-padding">
+    <div class="container">
+      <div class="d-flex align-items-center px-3 py-2 border mb-4">
+        <div class="text-start">
+          <h4 class="mb-0 h4 fw-bold">Select Payment Method</h4>
+        </div>
+      </div>
+      <div class="row g-4">
+        <div class="col-12 col-lg-8 col-xl-8">
+          <div class="card rounded-0 payment-method">
+            <div class="row g-0">
+              <div class="col-12 col-lg-4 bg-light">
+                <div class="nav flex-column nav-pills">
+                  <button class="nav-link rounded-0" data-bs-toggle="pill" data-bs-target="#v-pills-home" type="button"><i class="bi bi-cash-stack me-2"></i>Cash On Delivery</button>
+                  <button class="nav-link rounded-0" data-bs-toggle="pill" data-bs-target="#v-pills-profile" type="button"><i class="bi bi-paypal me-2"></i>RazorPay</button>
+                  <button class="nav-link active rounded-0" data-bs-toggle="pill" data-bs-target="#v-pills-messages" type="button"><i class="bi bi-credit-card-2-back me-2"></i>Credit/Debit Card</button>
+                  <button class="nav-link rounded-0 border-bottom-0" id="v-pills-settings-tab" data-bs-toggle="pill" data-bs-target="#v-pills-settings" type="button"><i class="bi bi-bank2 me-2"></i>Wallet</button>
+                </div>
+              </div>
+              <div class="col-12 col-lg-8">
+                <div class="tab-content p-3">
+                  <div class="tab-pane fade" id="v-pills-home">
+                   
+
+                    <% if (totalAmount <= 5000) { %>
+                      <!-- Show the "Pay Now" button -->
+                      <form id="codForm" action="/order/placeOrder" method="POST">
+
+
+                        <h5 class="mb-3 fw-bold">I would like to pay after product delivery</h5>
+                        <input type="hidden" name="selectedAddress" value="<%= selectedAddressId %>">
+                        <input type="hidden" name="totalAmount" value="<%= totalAmount %>">
+                        <input type="hidden" name="paymentOption" value="COD">
+                        <button type="submit" id="payNowButton" class="btn btn-ecomm btn-dark w-100 py-3 px-5">Pay Now</button>
+                      </form>
+                    <% } else { %>
+                      <!-- Show a message that COD is not available -->
+                      <div class="alert alert-warning" role="alert">
+                        Cash on Delivery is not available for orders exceeding ₹5000.
+                      </div>
+                    <% } %>
+                  </div>
+                  
+                  
+                  <div class="tab-pane fade" id="v-pills-profile">
+                    <div class="mb-3">
+                      <p class="mb-0">Razorpay is a premier payment gateway in India, renowned for its secure transactions and versatile payment options, empowering businesses to optimize online transactions and elevate customer satisfaction.</p>
+                    </div>
+                    <!-- Razorpay payment button -->
+                    <input type="hidden" name="selectedAddress" value="<%= selectedAddressId %>">
+                    <input type="hidden" name="paymentOption" value="razorpay">
+
+                    <button id="razorpayButton" class="btn btn-ecomm btn-dark w-100 py-3 px-5" onclick="confirmRazorpayPayment(<%= totalAmount %>, '<%= selectedAddressId %>')">Pay Now</button>
+                  </div>
+                  <div class="tab-pane fade show active" id="v-pills-messages">
+                    <div class="row g-3">
+                       <div class="col-12">
+                        <div class="form-floating">
+                          <input type="text" class="form-control rounded-0" id="floatingCardNumber" placeholder="Card Number">
+                          <label for="floatingCardNumber">Card Number</label>
+                        </div>
+                       </div>
+                       <div class="col-12">
+                        <div class="form-floating">
+                          <input type="text" class="form-control rounded-0" id="floatingNameonCard" placeholder="Name on Card">
+                          <label for="floatingNameonCard">Name on Card</label>
+                        </div>
+                       </div>
+                       <div class="col-12 col-lg-8">
+                        <div class="form-floating">
+                          <input type="text" class="form-control rounded-0" id="floatingValidity" placeholder="Validity (MM/YY)">
+                          <label for="floatingValidity">Validity (MM/YY)</label>
+                        </div>
+                       </div>
+                       <div class="col-12 col-lg-4">
+                        <div class="form-floating">
+                          <input type="text" class="form-control rounded-0" id="floatingCCV" placeholder="CCV">
+                          <label for="floatingCCV">CCV</label>
+                        </div>
+                       </div>
+                       <div class="col-12">
+                         <button type="button" class="btn btn-ecomm btn-dark w-100 py-3 px-5">Pay Now</button>
+                       </div>
+                    </div><!--end row-->
+                </div>
+                  <div class="tab-pane fade" id="v-pills-settings">
+                    <div class="mb-3">
+                      <p>This is the wallet method of payment . make sure you have enough balance in the wallet</p>
+                    </div>
+                    <form id="walletForm" action="/order/walletOrder" method="POST">
+                      <input type="hidden" name="selectedAddress" value="<%= selectedAddressId %>">
+                      <input type="hidden" name="totalAmount" value="<%= totalAmount %>">
+                      <input type="hidden" name="paymentOption" value="Wallet">
+                      <button type="submit" id="payNowButton" class="btn btn-ecomm btn-dark w-100 py-3 px-5">Pay Now</button>
+                     </form>
+                    <div class="">
+                      <p class="mb-0">Note: After clicking on the button, you will be directed to a secure gateway for payment. After completing the payment process, you will be redirected back to the website to view details of your order.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div><!--end row-->
+          </div>
+        </div>
+
+        <div class="col-12 col-lg-4 col-xl-4">
+          <div class="card rounded-0 mb-3">
+            <div class="card-body">
+              <h5 class="fw-bold mb-4">Order Summary</h5>
+              <div class="hstack align-items-center justify-content-between">
+                <p class="mb-0">Bag Total</p>
+                <p class="mb-0">₹<%= totalAmount %></p>
+              </div>
+              <hr>
+              <!-- Add delivery charge section -->
+              <% let deliveryCharge = 0; %>
+              <% if (totalAmount < 1000) { %>
+                <% deliveryCharge = 100; %>
+              <% } else if (totalAmount < 5000) { %>
+                <% deliveryCharge = 50; %>
+              <% } else { %>
+                <% deliveryCharge = 0; %>
+              <% } %>
+              <div class="hstack align-items-center justify-content-between">
+                <p class="mb-0">Delivery Charge</p>
+                <% if (deliveryCharge === 0) { %>
+                  <p class="mb-0">Free Delivery</p>
+                <% } else { %>
+                  <p class="mb-0">₹<%= deliveryCharge %></p>
+                <% } %>
+              </div>
+              <hr>
+              <div class="hstack align-items-center justify-content-between fw-bold text-content">
+                <p class="mb-0">Total Amount</p>
+                <!-- Include delivery charge in total amount -->
+                <p id="totalAmount" class="mb-0">₹<%= totalAmount + deliveryCharge %></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div><!--end row-->
+    </div>
+  </section>
+  <!--end product details-->
+</div>
+
+
+<%- include('../userlayout/footer.ejs') %>
+
+
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+function confirmRazorpayPayment(totalAmount, selectedAddressId) {
+  totalAmount = parseFloat(totalAmount);
+
+  fetch('/order/createOrder', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ totalAmount, selectedAddressId })
+  })
+  .then(response => response.json())
+  .then(order => {
+    let deliveryCharge = 0;
+    if (totalAmount < 1000) {
+      deliveryCharge = 100;
+    } else if (totalAmount < 5000) {
+      deliveryCharge = 50;
+    }
+    const totalAmountWithDelivery = totalAmount + deliveryCharge;
+
+    const formattedAmount = (totalAmountWithDelivery * 100).toFixed(0);
+    console.log('Received order details:', order);
+    var options = {
+      key: '<%= razorpaykey %>',
+      amount: formattedAmount,
+      currency: 'INR',
+      order_id: order.razorpay_order_id,
+      name: 'Your Company Name',
+      description: 'Order Payment',
+      handler: async function (response) {
+  console.log('Razorpay payment response:', response);
+
+  if (response.razorpay_payment_id) {
+    console.log('Razorpay payment success');
+    window.location.href = '/order/razorthanku';
+  } else {
+    console.log('Razorpay payment failed');
+    alert('Payment failed. Please try again.');
+  }
+},
+
+
+      prefill: {
+        name: 'User Name',
+        email: 'user@example.com',
+        contact: '1234567890',
+      },
+      notes: {
+        address: 'User Address',
+      },
+      theme: {
+        color: '#012652',
+      },
+    };
+
+    var rzp = new Razorpay(options);
+    rzp.open();
+  })
+  .catch(error => {
+    console.error('Error fetching Razorpay order:', error);
+    // Handle error
+  });
+}
+
+async function updatePaymentStatus(orderId, paymentStatus) {
+  try {
+    const response = await fetch('/order/updatePaymentStatus', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ orderId, paymentStatus }),
+    });
+    const result = await response.json();
+    console.log('Payment status updated:', result);
+  } catch (error) {
+    console.error('Error updating payment status:', error);
+  }
+}
+
+</script>
+
+<script>
+  $(document).ready(function() {
+   $('#walletForm').on('submit', function(e) {
+      e.preventDefault(); // Prevent the default form submission
+  
+      // AJAX request to handle the wallet payment
+      $.ajax({
+        url: '/order/walletOrder', // Make sure this is the correct endpoint
+        method: 'POST',
+        data: $(this).serialize(), // Serialize the form data
+        success: function(response) {
+          // Handle success, e.g., redirect to a success page
+          window.location.href = "/order/razorthanku";
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          // Check if the error is a 400 status with the specific error message
+          if (jqXHR.status === 400 && jqXHR.responseJSON.error === "Not enough money in wallet") {
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Not enough money in wallet. Please add funds to your wallet.'
+            });
+          } else {
+            // Handle other errors
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'An error occurred. Please try again.'
+            });
+          }
+        }
+      });
+   });
+  });
+  </script>
+  

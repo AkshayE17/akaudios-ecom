@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-container {
+            background-color: #121212;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            width: 350px;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .login-header h2 {
+            margin: 0;
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        .login-form {
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #dddddd;
+            font-weight: 500;
+        }
+
+        .form-group input[type="email"],
+        .form-group input[type="password"] {
+            width: calc(100% - 40px);
+            padding: 10px;
+            border: 1px solid #666666;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            background-color: #333333;
+            color: #ffffff;
+        }
+
+        .form-group input[type="email"]:focus,
+        .form-group input[type="password"]:focus {
+            outline: none;
+            border-color: #4caf50;
+        }
+
+        .login-button {
+            background-color: #4caf50;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            padding: 12px 0;
+            width: 100%;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .login-button:hover {
+            background-color: #388e3c;
+        }
+
+        .error-message {
+            color: #ff0000;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <div class="login-header">
+        <h2>Admin Login</h2>
+    </div>
+    <div class="login-form">
+        <form action="/admin" method="post">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="login-button">Login</button>
+        </form>
+        <% 
+          if (typeof message !== 'undefined') {
+              %>
+              <p class="error-message"><%= message %></p>
+              <%
+          }
+        %>
+    </div>
+</div>
+
+</body>
+</html>

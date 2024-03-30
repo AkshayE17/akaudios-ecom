@@ -1,0 +1,97 @@
+<%- include('../userlayout/header.ejs') %>
+<!--start page content-->
+<div class="page-content">
+  <!--start breadcrumb-->  
+  <div class="py-4 border-bottom">
+    <div class="container">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item"><a href="/checkout">Checkout</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Address</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+  <!--end breadcrumb-->
+
+  <!--start product details-->
+  <section class="section-padding">
+    <div class="container">
+      <div class="d-flex align-items-center justify-content-between px-3 py-2 border mb-4">
+        <div class="text-start">
+            <h4 class="mb-0 h4 fw-bold">Select Delivery Address</h4>
+        </div>
+        <div class="text-end">
+            <div class="card-body">
+                <a href="/address/loadAddaddress?source=checkout" class="btn btn-outline-dark btn-ecomm"><i class="bi bi-plus-lg me-2"></i>Add New Address</a>
+            </div>
+        </div>
+    </div>
+    
+      <div class="row g-4">
+        <div class="col-12 col-lg-8 col-xl-8">
+          <% if (addresses.length > 0) { %>
+            <% addresses.forEach(function(address) { %>
+              <form id="addressForm_<%= address._id %>" action="/order/payment" method="GET" style="display: none;">
+                <input type="hidden" name="selectedAddress" value="<%= address._id %>">
+              </form>
+              <div class="card rounded-0 mb-3">
+                <div class="card-body">
+                  <div class="d-flex flex-column flex-xl-row gap-3">
+                    <div class="address-info flex-grow-1">
+                      <label class="fw-bold mb-0 h5"><%= address.name %></label><br>
+                      <%= address.address %><br>
+                      <%= address.city %>, <%= address.state %> <%= address.pinCode %><br>
+                      Mobile: <span class="text-dark fw-bold"><%= address.mobileNo %></span>
+                    </div>
+                    <div class="d-none d-xl-block vr"></div>
+                    <div class="d-grid gap-2 align-self-start align-self-xl-center">
+                      <a href="/address/editaddress/<%= address._id %>?source=checkout" class="btn btn-outline-dark px-5 btn-ecomm">Edit</a>
+                      <button type="button" class="btn btn-outline-dark btn-ecomm" onclick="submitAddressForm('<%= address._id %>')">Place Order</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% }); %>
+          <% } else { %>
+            <p>No addresses found.</p>
+          <% } %>
+         
+        </div>
+        <div class="col-12 col-lg-4 col-xl-4">
+          <div class="card rounded-0 mb-3">
+            <div class="card-body">
+              <h5 class="fw-bold mb-4">Order Summary</h5>
+              <div class="hstack align-items-center justify-content-between">
+                <p class="mb-0">Bag Total</p>
+                <p class="mb-0">₹<%= totalAmount %></p>
+              </div>
+              <hr>
+              <div class="hstack align-items-center justify-content-between">
+                <p class="mb-0">Bag discount</p>
+                <p class="mb-0">₹0</p>
+              </div>
+              <hr>
+              <div class="hstack align-items-center justify-content-between fw-bold text-content">
+                <p class="mb-0">Total Amount</p>
+                <p id="totalAmount" class="mb-0">₹<%= totalAmount %></p>
+              </div>
+          
+            </div>
+          </div>
+        </div>
+      </div><!--end row-->
+    </div>
+  </section>
+  <!--start product details-->
+</div>
+<!--end page content-->
+
+<%- include('../userlayout/footer.ejs') %>
+
+<script>
+  function submitAddressForm(addressId) {
+    document.getElementById('addressForm_' + addressId).submit();
+  }
+</script>

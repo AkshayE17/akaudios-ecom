@@ -1,0 +1,81 @@
+<%- include('../adminlayout/header.ejs') %>
+
+<div class="content-main">
+ <div class="row">
+    <div class="col-12">
+      <div class="card mb-4">
+        <div class="content-header">
+          <div>
+            <h2 class="content-title card-title">COUPONS</h2>
+          </div>
+          <div class="ms-auto">
+            <a href="/admin/addcoupon" class="btn btn-primary me-3"><i class="text-muted material-icons md-post_add"></i>ADD COUPON</a>
+          </div>
+        </div>
+        <div class="card-body">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Coupon Code</th>
+                <th scope="col">Discount</th>
+                <th scope="col">Min Price</th>
+                <th scope="col">Max Price</th>
+                <th scope="col">Start Date</th>
+                <th scope="col">Expiry Date</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% coupons.forEach(coupon => { %>
+                <tr>
+                 <td><%= coupon.code %></td>
+                 <td><%= coupon.discount %></td>
+                 <td><%= coupon.minPrice %></td>
+                 <td><%= coupon.maxPrice %></td>
+                 <td><%= coupon.startDate.toLocaleDateString() %></td>
+                 <td><%= coupon.expiryDate.toLocaleDateString() %></td>
+                 <td>
+                    <form action="/admin/coupon/delete/<%= coupon._id %>" method="POST" id="deleteCouponForm_<%= coupon._id %>">
+                      <input type="hidden" name="_method" value="DELETE">
+                      <button type="button" class="btn btn-danger" onclick="confirmDelete('<%= coupon._id %>')">Delete</button>
+                    </form>
+                 </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+ </div>
+</div>
+<nav aria-label="Page navigation example">
+ <ul class="pagination justify-content-start">
+    <% for(let i = 1; i <= totalPages; i++) { %>
+      <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+        <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+      </li>
+    <% } %>
+ </ul>
+</nav>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script>
+ function confirmDelete(couponId) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You won\'t be able to revert this!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'No, cancel!',
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        document.getElementById('deleteCouponForm_' + couponId).submit();
+      }
+    });
+ }
+</script>
+
+<%- include('../adminlayout/footer.ejs') %>

@@ -1,0 +1,120 @@
+<%- include('../userlayout/header.ejs') %>
+<!--start page content-->
+<div class="page-content">
+  <!--start breadcrumb-->
+  <div class="py-4 border-bottom">
+    <div class="container">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0"> 
+          <li class="breadcrumb-item"><a href="javascript:;">Home</a></li>
+          <li class="breadcrumb-item"><a href="javascript:;">Shop</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Wishlist </li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+  <!--end breadcrumb-->
+
+  <!--start product wishlist-->
+  <section class="section-padding">
+    <div class="container">
+      <div class="d-flex align-items-center px-3 py-2 border mb-4">
+        <div class="text-start">
+          <h4 class="mb-0 h4 fw-bold">Wishlist (<%= wishlistItems.length %> Items)</h4>
+        </div>
+        <div class="ms-auto">
+          <a href="/">
+            <button type="button" class="btn btn-light btn-ecomm">Continue Shopping</button>
+          </a>
+        </div>
+      </div>
+      <div class="similar-products">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-5 g-4">
+          <% wishlistItems.forEach(item => { %>
+            <div class="col">
+              <div class="card rounded-0">
+                <div class="btn-close wishlist-close position-absolute end-0 top-0" data-item-id="<%= item._id %>"></div>
+                  <% if (item.productImg.length > 0) { %>
+                    <img src="/Product/<%= item.productImg[0] %>" alt="<%= item.productName %>" class="card-img-top rounded-0 product-img">
+
+                  <% } else { %>
+                    <!-- Provide a placeholder image or handle the case where productImg is empty -->
+                    <img src="/placeholder-image.jpg" alt="Placeholder" class="card-img-top rounded-0">
+                  <% } %>
+                </a>
+                <div class="card-body border-top text-center">
+                  <p class="mb-0 product-short-name"><%= item.productName %></p>
+                  <div class="product-price d-flex align-items-center gap-2 mt-2 justify-content-center">
+                    <div class="h6 fw-bold">$<%= item.offerPrice %></div>
+                    <% if (item.offerPrice && item.offerPercentage) { %>
+                      <div class="h6 fw-light text-muted text-decoration-line-through">$<%= item.price %></div>
+                      <div class="h6 fw-bold text-danger">(<%= item.offerPercentage %>% off)</div>
+                    <% } %>
+                  </div>
+                </div>
+                <form action="/cart/add-to-cart/<%= item._id %>" method="POST">
+                  <input type="hidden" name="productId" value="<%= item._id %>">
+                  <input type="hidden" name="quantity" value="1"> 
+                  <input type="hidden" name="price" value="<%= item.price %>">
+                  <div class="card-footer bg-transparent text-center">
+                    <button type="submit" class="btn btn-ecomm w-100">Move to Bag</button>
+                  </div>
+                </form>
+                
+              </div>
+            </div>
+          <% }); %>
+        </div>
+        <!--end row-->
+      </div>
+    </div>
+  </section>
+</div>
+<%- include('../userlayout/footer.ejs') %>
+<style>
+
+.product-img {
+  width: 200px;  /* adjust as needed */
+  height: 200px;  /* adjust as needed */
+  object-fit: cover;
+}
+
+</style>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script>
+document.querySelectorAll('.wishlist-close').forEach(button => {
+  button.addEventListener('click', function(event) {
+    event.preventDefault();
+    
+    const itemId = this.dataset.itemId;
+
+    fetch(`/cart/remove-from-wishlist/${itemId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        itemId: itemId
+      })
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+  swal("Success", "Item removed from wishlist!", "success")
+    .then(() => {
+      location.reload();
+    });
+})
+
+    .catch((error) => {
+      console.error('Error:', error);
+      swal("Error", "Failed to remove item from wishlist!", "error");
+    });
+  });
+});
+</script>
+

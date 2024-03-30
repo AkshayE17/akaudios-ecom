@@ -1,0 +1,223 @@
+
+<%- include('../adminlayout/header.ejs') %>  
+
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Order detail</h2>
+            <p>Details for Order ID: <%= order._id %></p>
+        </div>
+    </div>
+    <div class="card">
+        <header class="card-header">    
+        </header>
+        <div class="card-body">
+            <div class="row mb-50 mt-20 order-info-wrap">
+                <div class="col-md-4">
+                    <article class="icontext align-items-start">
+                        <span class="icon icon-sm rounded-circle bg-primary-light">
+                            <i class="text-primary material-icons md-person"></i>
+                        </span>
+                        <div class="text">
+                            <h6 class="mb-1">Customer</h6>
+                            <p class="mb-1">
+                                <%= order.userId.name %> <br />
+                                <%= order.userId.email %> <br />
+                                <%= order.userId.mobile %>
+                            </p>
+                            <a href="#">View profile</a>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="col-md-4">
+                    <article class="icontext align-items-start">
+                        <span class="icon icon-sm rounded-circle bg-primary-light">
+                            <i class="text-primary material-icons md-local_shipping"></i>
+                        </span>
+                        <div class="text">
+                            <h6 class="mb-1">Order info</h6>
+                            <p class="mb-1">
+                                Shipping: AK AUDIOS express <br />
+                                Pay method: <%= order.payment %> <br />
+                                Status: new
+                            </p>
+                            <a href="#">Download info</a>
+                        </div>
+                    </article>
+                </div>
+                
+                <div class="col-md-4">
+                    <article class="icontext align-items-start">
+                        <span class="icon icon-sm rounded-circle bg-primary-light">
+                            <i class="text-primary material-icons md-local_shipping"></i>
+                        </span>
+                        <div class="text">
+                            <h6 class="mb-1">Billing Address</h6>
+                            <% if (billingAddress) { %>
+                                <p class="mb-1">
+                                    <%= billingAddress.city %>, <%= billingAddress.country %> <br />
+                                    <%= billingAddress.address %> <br />
+                                    <%= billingAddress.pinCode %>
+                                </p>
+                                <a href="#">View on map</a>
+                            <% } else if (billingAddressMessage) { %>
+                                <p class="mb-1 text-danger"><%= billingAddressMessage %></p>
+                            <% } %>
+                        </div>
+                    </article>
+                </div>
+            </div>
+            <!-- Order Items -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th width="20%">Product</th>
+                                    <th width="15%">Unit Price</th>
+                                    <th width="15%">Quantity</th>
+                                    <th width="15%">Total</th>
+                                    <th width="15%">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% order.items.forEach(item => { %>
+                                    <tr>
+                                        <td>
+                                            <a class="itemside" href="#">
+                                                <div class="left">
+                                                    <% const product = item.product_id; %>
+                                                    <% if (product && product.productImg && product.productImg.length > 0) { %>
+                                                        <img src="/product/<%= product.productImg[0] %>" width="40" height="40" class="img-xs" alt="" />
+                                                    <% } else { %>
+                                                        <img src="/product/placeholder.jpg" width="40" height="40" class="img-xs" alt="" />
+                                                    <% } %>
+                                                </div>
+                                                <div class="info">
+                                                    <% if (product) { %>
+                                                        <%= product.productName %>
+                                                    <% } else { %>
+                                                        Product Not Found
+                                                    <% } %>
+                                                </div>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <% if (product) { %>
+                                                ₹<%= item.price.toFixed(2) %>
+                                            <% } else { %>
+                                                N/A
+                                            <% } %>
+                                        </td>
+                                        <td><%= item.quantity %></td>
+                                        <td class="text-center">
+                                            <% if (product) { %>
+                                                ₹<%= (item.quantity * item.price).toFixed(2) %>
+                                            <% } else { %>
+                                                N/A
+                                            <% } %>
+                                        </td>
+                                        <td>
+                                            <!-- Display status of the current item -->
+                                            <%= item.status %>
+                                            <!-- Select dropdown for updating status -->
+                                            <select class="form-select" id="statusSelect_<%= item._id %>" onchange="updateOrderStatus(this.value, '<%= order._id %>', '<%= item._id %>')">
+                                                <option value="pending" <%= item.status === 'pending' ? 'selected' : '' %>>Pending</option>
+                                                <option value="shipped" <%= item.status === 'shipped' ? 'selected' : '' %>>Shipped</option>
+                                                <option value="delivered" <%= item.status === 'delivered' ? 'selected' : '' %>>Delivered</option>
+                                                <option value="cancelled" <%= item.status === 'cancelled' ? 'selected' : '' %>>Cancelled</option>
+                                            </select>
+                                            <!-- Button to save the updated status -->
+                                            <button class="btn btn-primary" onclick="saveOrderStatus('<%= order._id %>', '<%= item._id %>')">Save</button>
+                                        </td>
+                                        
+                                    </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="main-footer font-xs">
+    <div class="row pb-30 pt-15">
+        <div class="col-sm-6">
+            <script>
+                document.write(new Date().getFullYear());
+            </script>
+            &copy; Nest - HTML Ecommerce Template .
+        </div>
+        <div class="col-sm-6">
+            <div class="text-sm-end">All rights reserved</div>
+        </div>
+    </div>
+</footer>
+</main>
+<script src="/assets/js/vendors/jquery-3.6.0.min.js"></script>
+<script src="/assets/js/vendors/bootstrap.bundle.min.js"></script>
+<script src="/assets/js/vendors/select2.min.js"></script>
+<script src="/assets/js/vendors/perfect-scrollbar.js"></script>
+<script src="/assets/js/vendors/jquery.fullscreen.min.js"></script>
+<script src="/assets/js/main.js?v=1.1" type="text/javascript"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
+
+<script>
+    function updateOrderStatus(status, orderId, itemId) {
+        const statusSelect = document.getElementById(`statusSelect_${itemId}`);
+        statusSelect.value = status;
+    }
+
+    function saveOrderStatus(orderId, itemId) {
+        const statusSelect = document.getElementById(`statusSelect_${itemId}`);
+        const status = statusSelect.value;
+        console.log("item id:", itemId);
+        console.log("status value:", status);
+
+        fetch(`/order/updateOrderStatus`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ orderId, itemId, status })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
+            // Display SweetAlert message on successful status update
+            Swal.fire({
+                title: 'Success!',
+                text: 'Order status has been updated.',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
+        })
+        .catch(error => {
+            console.error('There was a problem with your fetch operation:', error);
+            // Optionally, show an error message to the user
+            Swal.fire({
+                title: 'Error!',
+                text: 'Failed to update order status.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        });
+    }
+</script>
+
+</script>
+
+<%- include('../adminlayout/footer.ejs') %>

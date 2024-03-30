@@ -1,0 +1,190 @@
+<%- include('../userlayout/header.ejs') %>
+
+<!-- Include SweetAlert library -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <!--start page content-->
+  <div class="page-content">
+
+    <section class="slider-section">
+      <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
+         <div class="carousel-indicators">
+           <% banners.forEach((banner, index) => { %>
+             <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="<%= index %>" class="<%= index === 0 ? 'active' : '' %>" aria-current="<%= index === 0 ? 'true' : 'false' %>"></button>
+           <% }); %>
+         </div>
+         <div class="carousel-inner">
+           <% banners.forEach((banner, index) => { %>
+            <div class="carousel-item <%= index === 0 ? 'active' : '' %>" style="background-color: <%= banner.color %>;">
+              <div class="row d-flex align-items-center">
+                  <div class="col d-none d-lg-flex justify-content-center">
+                    <div class="">
+                      <h3 class="h3 fw-light text-white fw-bold"><%= banner.title %></h3>
+                      <h1 class="h1 text-white fw-bold"><%= banner.subtitle %></h1>
+                      <p class="text-white fw-bold"><i>Last call for upto 25%</i></p> <!-- Adjust this as needed -->
+                      <div class=""><a class="btn btn-dark btn-ecomm" href="/productfilter">Shop Now</a></div> <!-- Adjust this as needed -->
+                    </div>
+                  </div>
+                  <div class="col banner-container">
+                    <img src="/banners/<%= banner.image %>" class="img-fluid carousel-image" alt="...">
+                  </div>
+              </div>
+             </div>
+             
+             
+             
+           <% }); %>
+         </div>
+         <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+           <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+           <span class="visually-hidden">Previous</span>
+         </button>
+         <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+           <span class="carousel-control-next-icon" aria-hidden="true"></span>
+           <span class="visually-hidden">Next</span>
+         </button>
+      </div>
+     </section>
+     
+
+
+    <!--start Featured Products slider-->
+  <!-- Assuming you have a container to display featured products -->
+  <section class="section-padding">
+    <div class="container">
+      <div class="text-center pb-3">
+        <h3 class="mb-0 h3 fw-bold">Featured Products</h3>
+        <p class="mb-0 text-capitalize">The purpose of lorem ipsum</p>
+      </div>
+      <div class="product-thumbs">
+        <% for (let i = 0; i < products.length; i++) { %>
+          <div class="card">
+            <div class="position-relative overflow-hidden">
+              <a href="/product/<%= products[i]._id %>">
+                <img src="/product/<%= products[i].productImg[0] %>" class="card-img-top" alt="..." style="height: 300px;">
+              </a>              
+            </div>
+            <div class="card-body">
+              <div class="product-info text-center">
+                <h6 class="mb-1 fw-bold product-name"><%= products[i].productName %></h6>
+                <% if (products[i].offerPrice) { %>
+                  <p class="mb-0 h6 fw-bold product-price">
+                
+                    <span style="color: rgb(212, 209, 0);">$<%= products[i].offerPrice.toFixed(2) %></span> 
+                    <span style="text-decoration: line-through; color: #000;">$<%= products[i].price %></span> 
+                    <span style="color: red;">( <%= products[i].offerPercentage %>% of)</span>
+                  </p>
+                <% } else { %>
+                  <p class="mb-0 h6 fw-bold product-price">$<%= products[i].price %></p>
+                <% } %>
+              </div>
+            </div>
+          </div>
+        <% } %>
+        
+        
+        
+      </div>
+    </div>
+    <div id="isLoggedIn" data-isLoggedIn="<%= isLoggedIn %>"></div>
+
+  </section>
+  
+
+ 
+
+
+    <!--start cartegory slider-->
+    <section class="cartegory-slider section-padding bg-section-2">
+      <div class="container">
+        <div class="text-center pb-3">
+          <h3 class="mb-0 h3 fw-bold">Top Categories</h3>
+          <p class="mb-0 text-capitalize">Select your favorite categories and purchase</p>
+        </div>
+        <div class="cartegory-box">
+          <% categories.forEach(category => { %>
+            <a href="/productfilter?categoryId=<%= category._id %>" class="category-link">
+              <div class="card">
+                <div class="card-body">
+                  <div class="overflow-hidden" style="height: 200px;">
+                    <img src="/category/<%= category.categoryImg %>" class="card-img-top rounded-0" alt="<%= category.categoryName %> Image">
+                  </div>
+                  <div class="text-center">
+                    <h5 class="mb-1 cartegory-name mt-3 fw-bold"><%= category.categoryName %></h5>
+                    <h6 class="mb-0 product-number fw-bold"><%= category.productCount %> Products</h6>
+                  </div>
+                </div>
+              </div>
+            </a>
+          <% }); %>
+        </div>
+      </div>
+    </section>
+    
+    
+    <!--end cartegory slider-->
+
+  <!--Start Back To Top Button-->
+  <a href="javaScript:;" class="back-to-top"><i class="bi bi-arrow-up"></i></a>
+  <!--End Back To Top Button-->
+
+  <div id="isLoggedIn" data-isLoggedIn="<%= isLoggedIn %>"></div>
+
+  <!-- In your EJS template file -->
+  <script src="/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/jquery.min.js"></script>
+  <script src="/plugins/slick/slick.min.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/index.js"></script>
+  <script src="/js/loader.js"></script>
+  
+  <!-- Display SweetAlert based on isLoggedIn data attribute -->
+  </div>
+
+  
+  <%- include('../userlayout/footer.ejs') %>
+
+  
+  // JavaScript code in userHome.ejs
+  <script>
+    $(document).ready(function() {
+      var isLoggedIn = $('#isLoggedIn').data('isLoggedIn');
+  
+      if (isLoggedIn) {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+          }
+        });
+        
+        // Display the success message
+        Toast.fire({
+          icon: "success",
+          title: "Signed in successfully"
+        });
+      }
+    });
+  </script>
+<style>
+  .banner-container {
+     width: 100%; 
+     height: 700px; 
+     position: relative;
+  }
+ 
+  .carousel-image {
+     width: 100%; /* Image will take the full width of the banner container */
+     height: 100%; /* Image will take the full height of the banner container */
+     object-fit: cover; /* Ensures the image covers the area without distorting its aspect ratio */
+     position: absolute; /* Position the image absolutely within the banner container */
+     top: 0;
+     left: 0;
+  }
+ </style>
+ 

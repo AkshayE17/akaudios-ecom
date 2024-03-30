@@ -1,0 +1,142 @@
+<%- include('../adminlayout/header.ejs') %>
+
+<div class="row"> 
+  <div class="col-12">
+    <div class="card mb-4">
+      <div class="card-header">
+        <h4>Add Coupon</h4>
+      </div>
+      <% if (messages.error) { %>
+        <div class="alert alert-danger"><%= messages.error %></div>
+      <% } %>
+      <% if (messages.success) { %>
+        <div class="alert alert-success"><%= messages.success %></div>
+      <% } %>
+
+      <div class="card-body">
+        <!-- Coupon form -->
+        <form action="/admin/addcoupon" method="post" id="couponForm">
+          <div class="mb-3">
+            <label for="code" class="form-label">Coupon Code</label>
+            <input type="text" class="form-control" id="code" name="code"  />
+            <div id="codeError" class="text-danger"></div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="discount" class="form-label">Discount</label>
+              <input type="number" class="form-control" id="discount" name="discount"/>
+              <div id="discountError" class="text-danger"></div>
+            </div>
+            <div class="col-md-6">
+              <label for="minPrice" class="form-label">Minimum Price</label>
+              <input type="number" class="form-control" id="minPrice" name="minPrice" />
+              <div id="minPriceError" class="text-danger"></div>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="maxPrice" class="form-label">Maximum Price</label>
+              <input type="number" class="form-control" id="maxPrice" name="maxPrice"  />
+              <div id="maxPriceError" class="text-danger"></div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Start and Expiry Date</label>
+              <div class="input-group">
+                <input type="date" class="form-control" name="startDate"  />
+                <span class="input-group-text">to</span>
+                <input type="date" class="form-control" name="expiryDate" r/>
+              </div>
+              <div id="dateError" class="text-danger"></div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+document.getElementById('couponForm').addEventListener('submit', async function(event) {
+  event.preventDefault();
+  
+  var code = document.getElementById('code').value;
+  var codeError = document.getElementById('codeError');
+  var discount = parseFloat(document.getElementById('discount').value);
+  var discountError = document.getElementById('discountError');
+  var minPrice = parseFloat(document.getElementById('minPrice').value);
+  var minPriceError = document.getElementById('minPriceError');
+  var maxPrice = parseFloat(document.getElementById('maxPrice').value);
+  var maxPriceError = document.getElementById('maxPriceError');
+  var startDate = document.getElementsByName('startDate')[0].value;
+  var expiryDate = document.getElementsByName('expiryDate')[0].value;
+  var dateError = document.getElementById('dateError');
+
+  if (code === '') {
+    codeError.textContent = 'Please enter a coupon code.';
+    return;
+  } else {
+    codeError.textContent = '';
+  }
+
+  if (isNaN(discount) || discount <= 0) {
+    discountError.textContent = 'Discount price must be a positive number.';
+    return;
+  } else {
+    discountError.textContent = '';
+  }
+
+  if (isNaN(minPrice) || minPrice <= 0) {
+    minPriceError.textContent = 'Minimum price must be a positive number.';
+    return;
+  } else {
+    minPriceError.textContent = '';
+  }
+
+  if (isNaN(maxPrice) || maxPrice <= 0 || maxPrice <= minPrice) {
+    maxPriceError.textContent = 'Maximum price must be a positive number greater than minimum price.';
+    return;
+  } else {
+    maxPriceError.textContent = '';
+  }
+
+  if (startDate === '' || expiryDate === '') {
+    dateError.textContent = 'Please enter both start and expiry dates.';
+    return;
+  } else {
+    dateError.textContent = '';
+  }
+
+  try {
+  const response = await axios.post('/admin/addcoupon', {
+    code,
+    discount,
+    minPrice,
+    maxPrice,
+    startDate,
+    expiryDate
+  });
+
+  if (response.data && response.data.error) {
+    swal("Error", response.data.error, "error");
+  } else {
+    swal("Success", "Coupon added successfully", "success")
+      .then(() => {
+        window.location.href = '/admin/coupon';
+      });
+  }
+}  catch (error) {
+  if (error.response && error.response.data && error.response.data.error) {
+    // Display specific error message returned by the backend
+    swal("Error", error.response.data.error, "error");
+  } else {
+    console.error(error);
+    swal("Error", "An error occurred while adding the coupon", "error");
+  }
+}});
+</script>
+
+<%- include('../adminlayout/footer.ejs') %>

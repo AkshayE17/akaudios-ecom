@@ -1,0 +1,80 @@
+<%- include('../userlayout/header.ejs') %>
+
+
+  <!-- Start Product Details Section -->
+
+    <div class="container">
+      <header class="section-header mb-4">
+        <h2 class="section-title h3 fw-bold">Order Details</h2>
+      </header>
+
+      <div class="row">
+        <div class="col-lg-8">
+          <% order.forEach(order => { %>
+            <article class="order-card card mb-4">
+              <div class="card-body">
+                <!-- User Details -->
+                <section class="user-details mb-3">
+                  <h3 class="details-title h5">User Details</h3>
+                  <ul class="details-list">
+                    <li><i class="fas fa-user"></i> <%= order.userId.name %></li>
+                    <li><i class="fas fa-envelope"></i> <%= order.userId.email %></li>
+                    <li><i class="fas fa-phone"></i> <%= order.userId.mobile %></li>
+                  </ul>
+                </section>
+
+                <!-- Billing Address -->
+                <section class="billing-address mb-3">
+                  <h3 class="details-title h5">Billing Address</h3>
+                  <% if (order.billingAddress) { %>
+                    <ul class="details-list">
+                      <li><i class="fas fa-user"></i> <%= order.billingAddress.name %></li>
+                      <li><i class="fas fa-phone"></i> <%= order.billingAddress.mobileNo %></li>
+                      <li><i class="fas fa-map-marker-alt"></i> <%= order.billingAddress.address %>, <%= order.billingAddress.localityTown %>, <%= order.billingAddress.city %>, <%= order.billingAddress.state %>, <%= order.billingAddress.pinCode %></li>
+                    </ul>
+                  <% } else { %>
+                    <p>No billing address provided.</p>
+                  <% } %>
+                </section>
+
+                <!-- Product Details -->
+                <section class="product-details mb-3">
+                  <h3 class="details-title h5">Product Details</h3>
+                  <div class="product-card card">
+                    <div class="card-body">
+                      <div class="row">
+                        <div class="col-md-5">
+                          <!-- Product Image -->
+                          <% if (product.product_id && product.product_id.productImg && product.product_id.productImg[0]) { %>
+                            <img src="/product/<%= product.product_id.productImg[0] %>" class="product-image img-fluid rounded" alt="<%= product.product_id.productName %>">
+                          <% } else { %>
+                            <p>No image available.</p>
+                          <% } %>
+                        </div>
+                        <div class="col-md-7">
+                          <ul class="product-info-list">
+                            <li><strong>Name:</strong> <%= product.product_id.productName %></li>
+                            <li><strong>Quantity:</strong> <%= product.quantity %></li>
+                            <li><strong>Price:</strong> <%= product.price %></li>
+                            <li><strong>Status:</strong> <%= product.status %></li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <!-- Payment Method -->
+                <section class="payment-method">
+                  <h3 class="details-title h5">Payment Method</h3>
+                  <p><%= order.payment %></p>
+                </section>
+              </div>
+            </article>
+          <% }); %>
+        </div>
+      </div><!-- End Row -->
+
+
+
+<%- include('../userlayout/footer.ejs') %>

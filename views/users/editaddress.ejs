@@ -1,0 +1,161 @@
+<%- include('../userlayout/header.ejs') %>
+
+<!--start page content-->
+<div class="page-content">
+
+  <!--start product details-->
+  <section class="section-padding">
+    <div class="container">
+      <div class="d-flex align-items-center px-3 py-2 border mb-4">
+        <div class="text-start">
+          <h4 class="mb-0 h4 fw-bold">Account - Addresses</h4>
+        </div>
+      </div>
+      <div class="btn btn-dark btn-ecomm d-xl-none position-fixed top-50 start-0 translate-middle-y" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbarFilter"><span><i class="bi bi-person me-2"></i>Account</span></div>
+      <div class="row">
+        <div class="col-12 col-xl-3 filter-column">
+          <!-- Sidebar Menu -->
+        </div>
+        <!-- Edit Address Form -->
+        <div class="col-12 col-md-9">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="card-title fw-bold mb-0">Edit Address</h5>
+            </div>
+            <div class="card-body">
+              <form id="editAddressForm" action="/address/editaddress/<%= addressData._id %>?source=<%= source %>" method="POST" onsubmit="return validateForm()">
+
+                <div class="mb-3">
+                  <label for="name" class="form-label">Name</label>
+                  <input type="text" class="form-control" id="name" name="name" value="<%= addressData.name %>">
+                  <div id="nameError" class="error-message"></div>
+                </div>
+                <div class="mb-3">
+                  <label for="mobileNo" class="form-label">Mobile No</label>
+                  <input type="text" class="form-control" id="mobileNo" name="mobileNo" value="<%= addressData.mobileNo %>">
+                  <div id="mobileNoError" class="error-message"></div>
+                </div>
+                <div class="mb-3">
+                  <label for="pinCode" class="form-label">Pin Code</label>
+                  <input type="text" class="form-control" id="pinCode" name="pinCode" value="<%= addressData.pinCode %>">
+                  <div id="pinCodeError" class="error-message"></div>
+                </div>
+                <div class="mb-3">
+                  <label for="address" class="form-label">Address</label>
+                  <input type="text" class="form-control" id="address" name="address" value="<%= addressData.address %>">
+                  <div id="addressError" class="error-message"></div>
+                </div>
+                <div class="mb-3">
+                  <label for="localityTown" class="form-label">Locality / Town</label>
+                  <input type="text" class="form-control" id="localityTown" name="localityTown" value="<%= addressData.localityTown %>">
+                  <div id="localityTownError" class="error-message"></div>
+                </div>
+                <div class="mb-3">
+                  <label for="city" class="form-label">City / District</label>
+                  <input type="text" class="form-control" id="city" name="city" value="<%= addressData.city %>">
+                  <div id="cityError" class="error-message"></div>
+                </div>
+                <div class="mb-3">
+                  <label for="state" class="form-label">State</label>
+                  <input type="text" class="form-control" id="state" name="state" value="<%= addressData.state %>">
+                  <div id="stateError" class="error-message"></div>
+                </div>
+                <div class="mb-3">
+                  <label for="extraMobileNo" class="form-label">Extra Mobile No (Optional)</label>
+                  <input type="text" class="form-control" id="extraMobileNo" name="extraMobileNo" value="<%= addressData.extraMobileNo %>">
+                </div>
+                <button type="submit" class="btn btn-dark">Save Address</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<%- include('../userlayout/footer.ejs') %>
+
+<script>
+  function validateForm() {
+    var name = document.getElementById("name").value.trim();
+    var mobileNo = document.getElementById("mobileNo").value.trim();
+    var pinCode = document.getElementById("pinCode").value.trim();
+    var address = document.getElementById("address").value.trim();
+    var localityTown = document.getElementById("localityTown").value.trim();
+    var city = document.getElementById("city").value.trim();
+    var state = document.getElementById("state").value.trim();
+
+    var nameError = document.getElementById("nameError");
+    var mobileNoError = document.getElementById("mobileNoError");
+    var pinCodeError = document.getElementById("pinCodeError");
+    var addressError = document.getElementById("addressError");
+    var localityTownError = document.getElementById("localityTownError");
+    var cityError = document.getElementById("cityError");
+    var stateError = document.getElementById("stateError");
+
+    var isValid = true;
+
+    // Name validation
+    if (!name) {
+      nameError.innerHTML = "Please enter your name.";
+      isValid = false;
+    } else {
+      nameError.innerHTML = "";
+    }
+
+    // Mobile No validation
+    if (!mobileNo) {
+      mobileNoError.innerHTML = "Please enter your mobile number.";
+      isValid = false;
+    } else {
+      mobileNoError.innerHTML = "";
+    }
+
+    // Pin Code validation
+    if (!pinCode) {
+      pinCodeError.innerHTML = "Please enter pin code.";
+      isValid = false;
+    } else {
+      pinCodeError.innerHTML = "";
+    }
+
+    // Address validation
+    if (!address) {
+      addressError.innerHTML = "Please enter your address.";
+      isValid = false;
+    } else {
+      addressError.innerHTML = "";
+    }
+
+    // Locality/Town validation
+    if (!localityTown) {
+      localityTownError.innerHTML = "Please enter your locality/town.";
+      isValid = false;
+    } else {
+      localityTownError.innerHTML = "";
+    }
+
+    // City validation
+    if (!city) {
+      cityError.innerHTML = "Please enter your city/district.";
+      isValid = false;
+    } else {
+      cityError.innerHTML = "";
+    }
+
+    // State validation
+    if (!state) {
+      stateError.innerHTML = "Please enter your state.";
+      isValid = false;
+    } else {
+      stateError.innerHTML = "";
+    }
+
+    if (!isValid) {
+      event.preventDefault();
+    }
+
+    return isValid;
+  }
+</script>

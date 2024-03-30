@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Report Invoice</title>
+    <!-- Add your CSS stylesheets here -->
+    <link rel="stylesheet" href="/path/to/your/styles.css">
+</head>
+
+<body>
+
+    <!-- Header Section -->
+    <header class="header">
+        <div class="header__logo">
+            <img src="/images/LOGO2.png" class="logo-img" alt="AK AUDIOS Logo">
+        </div>
+        <div class="header__title">
+            <h1 class="header__title-text">Sales Report</h1>
+            <p class="header__subtitle">Whole data about your business here</p>
+        </div>
+    </header>
+
+    <!-- Content Section -->
+    <section class="content-main">
+        <!-- Sales Summary Cards -->
+        <div class="summary-cards">
+            <div class="summary-card">
+                <h2 class="summary-card__title">Revenue</h2>
+                <p class="summary-card__value">₹<%= totalRevenue.toFixed(2) %></p>
+                <p class="summary-card__description">Shipping fees are not included</p>
+            </div>
+            <div class="summary-card">
+                <h2 class="summary-card__title">Orders</h2>
+                <p class="summary-card__value"><%= totalOrders %></p>
+                <p class="summary-card__description">Excluding orders in transit</p>
+            </div>
+            <div class="summary-card">
+                <h2 class="summary-card__title">Products</h2>
+                <p class="summary-card__value"><%= totalProductsSold %></p>
+                <p class="summary-card__description">In <%= totalCategories %> Categories</p>
+            </div>
+            <div class="summary-card">
+                <h2 class="summary-card__title">Monthly Earning</h2>
+                <p class="summary-card__value">₹<%= monthlyEarning.toFixed(2) %></p>
+                <p class="summary-card__description">Based in your local time.</p>
+            </div>
+        </div>
+
+        <!-- Orders Table -->
+        <div class="orders-table">
+            <table class="table">
+                <thead class="table-header">
+                    <tr>
+                        <th scope="col">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="selectAllCheckbox" />
+                                <label class="form-check-label" for="selectAllCheckbox"></label>
+                            </div>
+                        </th>
+                        <th scope="col">Order ID</th>
+                        <th scope="col">Billing Name</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Total</th>
+                        <th scope="col">Payment Method</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% orders.forEach(order => { %>
+                        <tr>
+                            <td>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="transactionCheck<%= order._id %>" />
+                                    <label class="form-check-label" for="transactionCheck<%= order._id %>"></label>
+                                </div>
+                            </td>
+                            <td><a href="#" class="order-link">#<%= order._id %></a></td>
+                            <td><%= order.userId.name %></td>
+                            <td><%= formatDate(order.createdAt) %></td>
+                            <td>₹<%= order.totalAmount.toFixed(2) %></td>
+                            <td><%= order.payment %></td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer class="footer">
+        <div class="footer__text">
+            <p>&copy; <span id="currentYear"></span> Nest - HTML Ecommerce Template. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Add your JavaScript code here -->
+    <script>
+        // Update current year in the footer
+        document.getElementById('currentYear').innerText = new Date().getFullYear();
+    </script>
+</body>
+
+</html>

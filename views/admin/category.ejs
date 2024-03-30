@@ -1,0 +1,179 @@
+<%- include('../adminlayout/header.ejs') %>
+
+    
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <section class="content-main">
+        <div class="content-header">
+            <div class="row align-items-center">
+                <div class="col-md-4">
+                    <% if (typeof success !== 'undefined' && msg) { %>
+                        <div class="alert <% if (success) { %>alert-success<% } else { %>alert-danger<% } %>" role="alert">
+                          <%= msg %>
+                        </div>
+                      <% } %>
+                </div>
+                <div class="col-md-4 text-center">
+                    <h2 class="content-title card-title">Categories</h2>
+                </div>
+                <div class="col-md-4 text-center">
+                    <input type="text" id="categorySearchInput" placeholder="Search Categories" class="form-control bg-white mx-auto" style="width: 300px;" />
+
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Category Name</th>
+                                        <th>Category Image</th>
+                                        <th class="text-end">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% for (let i = 0; i < categories.length; i++) { %>
+                                        <tr>
+                                            
+                                            <td><%= i + 1 %></td>
+                                            <td><b><%= categories[i].categoryName %></b></td>
+                                           
+                                            <td>
+                                                <img src="/category/<%= categories[i].categoryImg %>" alt="<%= categories[i].categoryName %> Image" class="img-thumbnail custom-thumbnail" style="max-width: 100px; max-height: 100px;" />
+                                            </td>
+                                            <td class="text-end">
+                                                <a href="/admin/category/editCategory/<%= categories[i]._id %>" class="btn btn-info">Edit</a>
+                                                <button class="btn btn-danger delete-category" data-id="<%= categories[i]._id %>">Delete</button>
+                                            </td>
+                                            
+                                        </tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                            
+                        </div>
+                    </div>
+                    <!-- .col// -->
+                </div>
+            </div>
+        </div>
+    
+        <!-- Add Category button below the table -->
+        <div class="row mt-3">
+            <div class="col-md-12 text-center">
+                <a href="/admin/category/addcategory" class="btn btn-primary">Add Category</a>
+            </div>
+        </div>
+    </section>
+    
+    
+    
+    
+    
+    
+    <footer class="main-footer font-xs">
+        <div class="row pb-30 pt-15">
+            <div class="col-sm-6">
+                <script>
+                    document.write(new Date().getFullYear());
+                </script>
+                &copy; Nest - HTML Ecommerce Template .
+            </div>
+            <div class="col-sm-6">
+                <div class="text-sm-end">All rights reserved</div>
+            </div>
+        </div>
+    </footer>
+</main>
+<script src="/js/vendors/jquery-3.6.0.min.js"></script>
+<script src="/js/vendors/bootstrap.bundle.min.js"></script>
+<script src="/js/vendors/select2.min.js"></script>
+<script src="/js/vendors/perfect-scrollbar.js"></script>
+<script src="/js/vendors/jquery.fullscreen.min.js"></script>
+<!-- Main Script -->
+<script src="/js/main.js?v=1.1" type="text/javascript"></script>
+
+<%- include('../adminlayout/footer.ejs') %>
+
+<script>
+    // Function to handle category deletion
+    function deleteCategory(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You will not be able to recover this category!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // If confirmed, redirect to delete route
+                window.location.href = '/admin/category/deletecategory/' + id;
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                Swal.fire('Cancelled', 'Your category is safe :)', 'error');
+            }
+        });
+    }
+
+    // Attach click event listener to delete buttons
+    const deleteButtons = document.querySelectorAll('.delete-category');
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const categoryId = button.getAttribute('data-id');
+            deleteCategory(categoryId);
+        });
+    });
+
+
+// Function to handle category search
+function searchCategory() {
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("categorySearchInput");
+    filter = input.value.toUpperCase();
+    table = document.querySelector(".table");
+    tr = table.getElementsByTagName("tr");
+
+    var foundCategories = false; // Flag to track if any category is found
+
+    for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[1]; // Search by Category Name (index 1)
+        if (td) {
+            txtValue = td.textContent || td.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+                foundCategories = true;
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+
+    // Remove previous no results message if any
+    var noResultsRow = table.querySelector(".no-results-row");
+    if (noResultsRow) {
+        table.removeChild(noResultsRow);
+    }
+
+    // Display message if no categories are found
+    if (!foundCategories) {
+        var noResultsRow = document.createElement("tr");
+        noResultsRow.classList.add("no-results-row");
+        var noResultsCell = document.createElement("td");
+        noResultsCell.setAttribute("colspan", "4");
+        noResultsCell.textContent = "No categories available";
+        noResultsRow.appendChild(noResultsCell);
+        table.appendChild(noResultsRow);
+    }
+}
+
+// Add event listener to the search input
+document.getElementById("categorySearchInput").addEventListener("input", searchCategory);
+
+
+</script>

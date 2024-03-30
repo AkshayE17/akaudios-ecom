@@ -1,0 +1,194 @@
+
+<%- include('../userlayout/header.ejs') %>
+<style>
+
+    .image{
+      position: relative;
+      width: 600px;
+      height:400px;
+      overflow:hidden;
+      border: 2px solid #ff0000;
+      box-shadow: -1px 5px 15px #000;
+    
+    }
+    .image img{
+      position:absolute ;
+      width: 100%;
+      height: 100%;
+      -o-object-fit: cover;
+      object-fit: cover;
+      transform: scale(var(--zoom,1));
+      transform-origin: var(--x)var(--y);
+      transition: transform 0.3s ease;
+    }
+    .image:hover{
+      --zoom: 3;
+    }
+    .rating-box{
+      width: fit-content;
+    }
+    
+  
+</style>
+<div class="page-content">
+  <section class="py-4">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-12 col-xl-7">
+          <div class="product-images">
+              <!-- Display the top image in a larger format -->
+              
+              <div class="row g-3">
+                  <div class="col position-relative">
+                      <div id="mainImageContainer" class="image" data-fancybox="gallery" data-src="<%= products.productImg[0] %>">
+                          <img id="mainImage" src="/Product/<%= products.productImg[0] %>"  alt="" >
+                      </div>
+                  </div>
+              </div><!--end row-->
+      
+              <!-- Rest of the images -->
+              <div class="row mt-5">
+                  <% for (var i = 1; i < products.productImg.length; i++) { %>
+                  <div class="col-sm-3">
+                      <div class="img-thumb-container overflow-hidden position-relative" data-fancybox="gallery" data-src="<%= products.productImg[i] %>">
+                          <img class="img-thumbnail" src="/Product/<%= products.productImg[i] %>" alt="">
+                      </div>
+                  </div>
+                  <% } %>
+              </div><!--end row-->
+          </div>
+      </div>
+      
+      
+      
+        
+        <div class="col-12 col-xl-5">
+          <div class="product-info">
+            
+            <h3 class="product-title fw-bold mb-1" style="text-transform: uppercase;"><%= products.productName %></h3>
+
+
+           
+            
+            
+            <p class="mb-0"></p>
+            <hr>
+            <div class="product-price d-flex align-items-center gap-3">
+              <% if (products.offerPrice && products.offerPrice !== products.price) { %>
+                <div class="h4 fw-bold text-warning">
+                  ₹<%=  products.offerPrice.toFixed(2) %>
+
+                  <span style="text-decoration: line-through; color: #999;">₹<%= products.price.toFixed(2) %></span>
+
+                  <span class="text-danger"><%= products.offerPercentage %> % off</span>
+                </div>
+              <% } else { %>
+                <div class="h4 fw-bold">₹<%=  products.price.toFixed(2) %></div>
+              <% } %>
+            </div>
+            
+            
+            <div>  <p class="fw-bold mb-0 mt-1 text-success">inclusive of all taxes</p></div>
+ 
+            <div class="rating-box bg-yellow text-center p-2 rounded">
+              Rating: 4.5 <i class="bi bi-star-fill text-warning"></i>
+            </div>
+            <div class="cart-buttons mt-3">
+              <div class="buttons d-flex flex-column flex-lg-row gap-3 mt-4">
+                  <% if (products.stockCount > 0) { %>
+                    <form action="/cart/add-to-cart/<%= products._id %>" method="POST">
+            
+                      <input type="hidden" name="productId" value="<%= products._id %>">
+                      <input type="hidden" name="quantity" value="1"> 
+                      <input type="hidden" name="price" value="<%= products.price %>">
+
+                      <button type="submit" class="btn btn-lg btn-dark btn-ecomm px-5 py-3 w-100">
+                          <i class="bi bi-basket2 me-2"></i>Add to Bag
+                      </button>
+                  </form>
+                  <% } else { %>
+                      <p class="text-danger">Out of Stock</p>
+                  <% } %>
+
+                  <form action="/cart/add-to-wishlist/<%= products._id %>" method="POST">
+            
+                    <input type="hidden" name="productId" value="<%= products._id %>">
+                    <input type="hidden" name="quantity" value="1"> 
+                    <input type="hidden" name="price" value="<%= products.price %>">
+
+                    <button type="submit" class="btn btn-lg btn-outline-dark btn-ecomm px-5 py-3">
+                      <i class="bi bi-suit-heart me-2"></i>Wishlist
+                    </button>
+                </form>
+
+              </div>
+          </div>
+          
+            <hr class="my-3">
+            <div class="product-info">
+              <h6 class="fw-bold mb-3">Product Details</h6>
+              <p class="mb-1"><%= products.description %></p>
+            </div>
+            <hr class="my-3">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+<div id="zoom-image-container">
+  <img id="zoomed-image" src="">
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<script>
+  $(document).ready(function() {
+    var initialMainImageSrc = $('#mainImage').attr('src');
+
+    $('.img-thumbnail').on('click', function() {
+      var clickedSrc = $(this).attr('src');
+
+      var mainImageSrc = $('#mainImage').attr('src');
+      
+      $('#mainImage').attr('src', clickedSrc);
+
+      $(this).attr('src', mainImageSrc);
+    });
+  
+    $("[data-fancybox]").fancybox({
+      beforeShow: function(instance, current) {
+        // Store the current source before showing
+        current.opts.$origSrc = $('#mainImage').attr('src');
+      },
+      afterClose: function(instance, current) {
+        // Restore the original source after closing
+        $('#mainImage').attr('src', current.opts.$origSrc || initialMainImageSrc);
+      }
+    });
+  });
+  
+  document.querySelectorAll('.image').forEach(elem => {
+    let x, y, width, height;
+    const img = elem.querySelector('img'); 
+
+    elem.onmouseenter = () => {
+        const size = elem.getBoundingClientRect();
+        x = size.x;
+        y = size.y;
+        width = size.width;
+        height = size.height;
+    };
+
+    elem.onmousemove = e => {
+        const horizontal = (e.clientX - x) / width * 100;
+        const vertical = (e.clientY - y) / height * 100;
+        img.style.setProperty('--x', horizontal + '%'); 
+        img.style.setProperty('--y', vertical + '%'); 
+    };
+});
+
+  </script>
+  
+
+<%- include('../userlayout/footer.ejs') %>

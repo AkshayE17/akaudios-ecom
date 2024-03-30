@@ -1,0 +1,158 @@
+<%- include('../userlayout/header.ejs') %>
+
+<div class="page-content">
+ <section class="section-padding">
+    <div class="container">
+      <div class="d-flex align-items-center px-3 py-2 border mb-4">
+        <div class="text-start">
+          <h4 class="mb-0 h4 fw-bold">Account - Wallet</h4>
+        </div>
+      </div>
+      <div class="btn btn-dark btn-ecomm d-xl-none position-fixed top-50 start-0 translate-middle-y" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbarFilter"><span><i class="bi bi-person me-2"></i>Account</span></div>
+      <div class="row">
+        <div class="col-12 col-xl-3 filter-column">
+          <nav class="navbar navbar-expand-xl flex-wrap p-0">
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbarFilter" aria-labelledby="offcanvasNavbarFilterLabel">
+              <div class="offcanvas-header">
+                <h5 class="offcanvas-title mb-0 fw-bold text-uppercase" id="offcanvasNavbarFilterLabel">Account</h5>
+                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+              </div>
+              <div class="offcanvas-body account-menu">
+                <div class="list-group w-100 rounded-0">
+                  <a href="/userdashboard" class="list-group-item "><i class="bi bi-house-door me-2"></i>Dashboard</a>
+                  <a href="/order/viewOrder" class="list-group-item"><i class="bi bi-basket3 me-2"></i>Orders</a>
+                  <a href="/userdetails" class="list-group-item"><i class="bi bi-person me-2"></i>Profile</a>
+                  <a href="/editdetails" class="list-group-item"><i class="bi bi-pencil me-2"></i>Edit Profile</a>
+                  <a href="/updatepassword" class="list-group-item"><i class="bi bi-pencil me-2"></i>Change Password</a>
+                  <a href="/address/loadSavedaddress" class="list-group-item"><i class="bi bi-pin-map me-2"></i>Saved Address</a>
+                  <a href="/cart/wishlist" class="list-group-item"><i class="bi bi-suit-heart me-2"></i>Wishlist</a>
+                  <a href="/cart/wallet" class="list-group-item  active"><i class="bi bi-basket3 me-2"></i>wallet</a>
+                  <a href="/logout" class="list-group-item"><i class="bi bi-power me-2"></i>Logout</a>
+                </div>
+              </div>
+            </div>
+          </nav>
+        </div>
+        <div class="col-12 col-xl-9">
+          <h5>Wallet Balance</h5>
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0">₹<%= walletBalance %></h2>
+            <button id="addMoneyButton" class="btn btn-ecomm btn-dark py-2 px-4" onclick="initiatePayment()">Add Money to Wallet</button>
+          </div>
+          <h5>Transaction History</h5>
+          <% if (transactions.length === 0) { %>
+            <p>No transaction history</p>
+          <% } else { %>
+            <table class="table">
+              <thead>
+                <tr>
+                 <th>Amount</th>
+                 <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% transactions.reverse().forEach(transaction => { %>
+                 <tr>
+                    <td>
+                      <% if (transaction.type === 'credit') { %>
+                        <span style="color: green;">+₹<%= transaction.amount %></span>
+                      <% } else if (transaction.type === 'debit') { %>
+                        <span style="color: red;">-₹<%= transaction.amount %></span>
+                      <% } %>
+                    </td>
+                    <td><%= transaction.transactionDate %></td>
+                 </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          <% } %>
+        </div>
+      </div>
+    </div>
+ </section>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+<script>
+  function initiatePayment() {
+    Swal.fire({
+      title: 'Enter Amount',
+      input: 'number',
+      inputLabel: 'Amount',
+      inputAttributes: {
+        autocapitalize: 'off'
+      },
+      showCancelButton: true,
+      confirmButtonText: 'Add',
+      showLoaderOnConfirm: true,
+      preConfirm: (amount) => {
+        return fetch('/wallet/addMoney', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ amount: amount })
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to add money');
+          }
+          return response.json();
+        })
+        .catch(error => {
+          Swal.showValidationMessage(
+            `Request failed: ${error}`
+          );
+        });
+      },
+      allowOutsideClick: () => !Swal.isLoading()
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if (result.value.orderId) {
+          const options = {
+            key: '<%= razorpaykey %>',
+            amount: result.value.amount * 100,
+            currency: 'INR',
+            order_id: result.value.orderId,
+            handler: function(response) {
+              // Handle successful payment
+              Swal.fire({
+                icon: 'success',
+                title: 'Payment successful!',
+                showConfirmButton: false,
+                timer: 1500
+              }).then(() => {
+                location.reload(); // Refresh the page to reflect the updated wallet balance
+              });
+            },
+            prefill: {
+              // Add prefill information if needed
+            },
+            theme: {
+              // Add theme customization if needed
+            }
+          };
+          const rzp = new Razorpay(options);
+          rzp.on('payment.failed', function (response){
+            Swal.fire({
+              icon: 'error',
+              title: 'Payment failed',
+              text: response.error.code + ":\n" + response.error.description
+            });
+          });
+          rzp.open();
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Failed to initiate payment',
+            text: 'Please try again.'
+          });
+        }
+      }
+    });
+  }
+</script>
+
+<%- include('../userlayout/footer.ejs') %>

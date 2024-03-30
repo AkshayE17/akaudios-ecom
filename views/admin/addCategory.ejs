@@ -1,0 +1,90 @@
+<%- include('../adminlayout/header.ejs') %>
+
+<section class="content-main">
+    <div class="content-header">
+        <div class="row align-items-center">
+            <div class="col-md-4"></div>
+            <% if (typeof success !== 'undefined' && msg) { %>
+                <div class="alert <% if (success) { %>alert-success<% } else { %>alert-danger<% } %>" role="alert">
+                  <%= msg %>
+                </div>
+              <% } %>
+            <div class="col-md-4 text-center">
+                <h2 class="content-title card-title">Categories</h2>
+            </div>
+            <div class="col-md-4 text-center">
+                <form id="addCategoryForm" action="/admin/category/addcategory" method="post" enctype="multipart/form-data" class="p-5 border rounded" style="width: 400px;">
+                    <div class="mb-3">
+                        <label for="newCategoryName" class="form-label">Category Name</label>
+                        <input type="text" class="form-control" name="newCategoryName" id="newCategoryName"> <!-- Updated line: added id -->
+                        <div id="newCategoryNameError" class="text-danger"></div> <!-- Added error message div -->
+                    </div>
+                    <div class="mb-3">
+                        <label for="newCategoryImage" class="form-label">Category Image</label>
+                        <div class="input-group">
+                            <input type="file" class="form-control" name="newCategoryImage" id="newCategoryImage" accept="image/*"> <!-- Updated line: added id -->
+                            <div id="newCategoryImageError" class="text-danger"></div> <!-- Added error message div -->
+                        </div>
+                    </div>
+                    <div class="mb-3 text-center">
+                        <button type="submit" class="btn btn-primary">Add Category</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="main-footer font-xs">
+    <div class="row pb-30 pt-15">
+        <div class="col-sm-6">
+            <script>
+                document.write(new Date().getFullYear());
+            </script>
+            &copy; Nest - HTML Ecommerce Template .
+        </div>
+        <div class="col-sm-6">
+            <div class="text-sm-end">All rights reserved</div>
+        </div>
+    </div>
+</footer>
+
+<!-- Main Script -->
+<script src="/js/vendors/jquery-3.6.0.min.js"></script>
+<script src="/js/vendors/bootstrap.bundle.min.js"></script>
+<script src="/js/vendors/select2.min.js"></script>
+<script src="/js/vendors/perfect-scrollbar.js"></script>
+<script src="/js/vendors/jquery.fullscreen.min.js"></script>
+<script src="/js/main.js?v=1.1" type="text/javascript"></script>
+
+<!-- Validation Script -->
+<script>
+    document.getElementById('addCategoryForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        var newCategoryName = document.getElementById('newCategoryName');
+        var newCategoryImage = document.getElementById('newCategoryImage');
+
+        // Reset error messages
+        document.querySelectorAll('[id^="newCategory"]').forEach(error => {
+            error.textContent = '';
+        });
+
+        // Validate Category Name
+        if(newCategoryName.value === '') {
+            document.getElementById('newCategoryNameError').textContent = 'Category Name is required';
+            return false;
+        }
+
+        // Validate Category Image
+        if(newCategoryImage.value === '') {
+            document.getElementById('newCategoryImageError').textContent = 'Category Image is required';
+            return false;
+        }
+
+        // If all validations pass, submit the form
+        event.currentTarget.submit();
+    });
+</script>
+
+<%- include('../adminlayout/footer.ejs') %>

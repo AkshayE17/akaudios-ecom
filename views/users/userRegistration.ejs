@@ -1,0 +1,163 @@
+<%- include('../userlayout/header.ejs') %>
+<!--start page content-->
+<div class="page-content">
+
+   <!--start breadcrumb-->
+    <div class="py-4 border-bottom">
+    <div class="container">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0"> 
+          <li class="breadcrumb-item"><a href="javascript:;">Home</a></li>
+          <li class="breadcrumb-item"><a href="javascript:;">Authentication</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Register</li>
+        </ol>
+      </nav>
+    </div>
+   </div> 
+   <!--end breadcrumb-->
+
+
+   <!--start product details-->
+   <section class="section-padding">
+    <div class="container">
+      
+        <div class="row">
+          <div class="col-12 col-lg-6 col-xl-5 col-xxl-5 mx-auto">
+             <div class="card rounded-0">
+               <div class="card-body p-4">
+                 <h4 class="mb-0 fw-bold text-center">Registration</h4>
+                 <hr>
+                <form id="registrationForm" action="/registration" method="post">
+                  <div class="row g-4">
+                    <div class="col-12">
+                      <label for="exampleName" class="form-label">Name</label>
+                      <input type="text" class="form-control rounded-0" id="exampleName" name="name"  placeholder="Enter Name">
+                      <div id="nameError" class="error-message text-danger"></div>
+                    </div>
+                    <div class="col-12">
+                      <label for="exampleMobile" class="form-label">Mobile</label>
+                      <input type="text" class="form-control rounded-0" id="exampleMobile" name="mobile"  placeholder="Enter 10-digit Mobile Number">
+                      <div id="mobileError" class="error-message text-danger"></div>
+                    </div>
+                    <div class="col-12">
+                      <label for="exampleEmail" class="form-label">Email ID</label>
+                      <input type="text" class="form-control rounded-0" id="exampleEmail" name="email"  placeholder="Enter Email">
+                      <div id="emailError" class="error-message text-danger"></div>
+                    </div>
+                    <div class="col-12">
+                      <label for="examplePassword" class="form-label">Password</label>
+                      <input type="password" class="form-control rounded-0" id="examplePassword" name="password" placeholder="Enter Password">
+                      <div id="passwordError"class="error-message text-danger"></div>
+                    </div>
+                    <div class="col-12">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                        <label class="form-check-label" for="flexCheckDefault">
+                          I agree to Terms and Conditions
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-12">
+                      <hr class="my-0">
+                    </div>
+                    <div class="col-12">
+                      <button type="submit" class="btn btn-dark rounded-0 btn-ecomm w-100" value="Register">Sign Up</button>
+                    </div>
+                    <div class="col-12 text-center">
+                      <p class="mb-0 rounded-0 w-100">Already have an account? <a href="/login" class="text-danger">Sign In</a></p>
+                    </div>
+                  </div>
+                </form>
+                
+               </div>
+             </div>
+          </div>
+        </div>
+       
+    </div>
+  </section>
+
+
+ </div>
+  
+
+
+  
+
+
+  <%- include('../userlayout/footer.ejs') %>
+
+  <script>
+document.getElementById("registrationForm").addEventListener("submit", function(event) {
+  var name = document.getElementById("exampleName").value.trim();
+  var mobile = document.getElementById("exampleMobile").value.trim();
+  var email = document.getElementById("exampleEmail").value.trim();
+  var password = document.getElementById("examplePassword").value;
+  
+  var nameError = document.getElementById("nameError");
+  var mobileError = document.getElementById("mobileError");
+  var emailError = document.getElementById("emailError");
+  var passwordError = document.getElementById("passwordError");
+
+  var isValid = true;
+
+
+  if (!name) {
+    nameError.innerHTML = "Please enter your name.";
+    isValid = false;
+  } else if (!/^[A-Za-z\s]+$/.test(name)) {
+    nameError.innerHTML = "Name must contain only letters.";
+    isValid = false;
+  } else {
+    nameError.innerHTML = "";
+  }
+
+
+  if (!mobile) {
+    mobileError.innerHTML = "Please enter your mobile number.";
+    isValid = false;
+} else if (!/^\d{10}$/.test(mobile)) {
+    mobileError.innerHTML = "Please enter a valid 10-digit mobile number.";
+    isValid = false;
+} else if (/^0+$/.test(mobile)) {
+    mobileError.innerHTML = "Mobile number cannot be all zeros.";
+    isValid = false;
+} else {
+    mobileError.innerHTML = "";
+}
+
+if (!email) {
+    emailError.innerHTML = "Please enter your email address.";
+    isValid = false;
+} else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    emailError.innerHTML = "Please enter a valid email address.";
+    isValid = false;
+} else {
+    emailError.innerHTML = "";
+}
+
+  if (!password) {
+    passwordError.innerHTML = "Please enter your password.";
+    isValid = false;
+  } else if (password.length < 8) {
+    passwordError.innerHTML = "Password must be at least 8 characters long.";
+    isValid = false;
+  } else if (!/\d/.test(password)) {
+    passwordError.innerHTML = "Password must contain at least one digit.";
+    isValid = false;
+  } else if (!/[A-Z]/.test(password)) {
+    passwordError.innerHTML = "Password must contain at least one uppercase letter.";
+    isValid = false;
+  } else if (!/[a-z]/.test(password)) {
+    passwordError.innerHTML = "Password must contain at least one lowercase letter.";
+    isValid = false;
+  } else {
+    passwordError.innerHTML = "";
+  }
+
+  if (!isValid) {
+    event.preventDefault();
+  }
+});
+
+    </script>

@@ -1,0 +1,235 @@
+<%- include('../adminlayout/header.ejs') %>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<section class="content-main">
+    <div class="content-header">
+        <div class="row align-items-center">
+            <div class="col-md-4">
+                <!-- Removed text-end class to align left -->
+            </div>
+            <div class="col-md-4 text-center">
+                <h2 class="content-title card-title">Products</h2>
+            </div>
+            <div class="col-md-4 text-end">
+                <input type="text" id="searchInput" placeholder="Search Products" class="form-control bg-white" style="width: 200px;" oninput="searchFunction()" />
+            </div>
+        </div>
+
+        <% if (success) { %>
+            <script>
+                // SweetAlert success message
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: '<%= success %>'
+                });
+            </script>
+        <% } else if (error) { %>
+            <script>
+                // SweetAlert error message
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: '<%= error %>'
+                });
+            </script>
+        <% } %>
+        
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12"> 
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>#</th> 
+                    <th>Image</th>
+                    <th>Product Name</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Category</th>
+                    <th>Colour</th>
+                    <th>Stock Count</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            
+            <tbody>
+                <% if (products.length > 0) { %>
+                    <% for (let i = 0; i < products.length; i++) { %>
+                        <tr>
+                            <td><%= i + 1 %></td> <!-- Add this line to display the counter -->
+                            <td><img src="/product/<%= products[i].productImg[0] %>" class="img-thumbnail product-image" alt="<%= products[i].productName %> Image"></td>
+                            <td><%= products[i].productName %></td>
+                            <td class="description-cell">
+                                <% if (products[i].description.length > 100) { %>
+                                    <span data-toggle="tooltip" title="<%= products[i].description %>">
+                                        <%= products[i].description.substring(0, 100) %>...<i class="bi bi-info-circle-fill"></i>
+                                    </span>
+                                <% } else { %>
+                                    <%= products[i].description %>
+                                <% } %>
+                            </td>
+                            <td><%= products[i].price %></td>
+                            <td><%= products[i].category.categoryName %></td>
+                            <td><%= products[i].colour %></td>
+                            <td><%= products[i].stockCount %></td>
+                            <td class="action-buttons">
+                                <td class="text-end">
+                                    <a href="/admin/products/editProduct/<%= products[i]._id %>" class="btn btn-info">Edit</a>
+                                    <button class="btn btn-danger delete-product" data-id="<%= products[i]._id %>">Delete</button>
+                                </td>
+                        </tr>
+                    <% } %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="9">Products not found</td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- .col// -->
+</div>
+</div>
+</div>
+
+    <!-- Add Product button below the table -->
+    <div class="row mt-3">
+        <div class="col-md-12 text-center">
+            <a href="/admin/products/addproduct" class="btn btn-primary btn-sm">Add Product</a>
+        </div>
+    </div>
+</section>
+
+
+<style>
+    .description-cell {
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+  
+
+    .product-image {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+    }
+
+    .action-buttons button {
+        margin-right: 5px;
+    }
+
+    /* Adjust the size of the search input */
+    #searchInput {
+        height: 30px;
+        font-size: 14px;
+        padding: 5px;
+    }
+
+    /* Align the search bar to the right side of the screen */
+    .text-end {
+        justify-content: flex-end;
+    }
+
+</style>
+
+<script>
+
+function deleteProduct(Id) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = "/admin/products/deleteProduct/" + Id;
+        }else if (result.dismiss === Swal.DismissReason.cancel) {
+            Swal.fire('Cancelled', 'Your product is safe :)', 'error');
+        }
+    });
+}
+const deleteButtons = document.querySelectorAll('.delete-product');
+deleteButtons.forEach(button => {
+    button.addEventListener('click', (event) => {
+        event.stopPropagation(); 
+        const Id = button.getAttribute('data-id');
+        deleteProduct(Id);
+    });
+});
+
+
+    function searchFunction() {
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("searchInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementsByClassName("table")[0];
+        tr = table.getElementsByTagName("tr");
+        var found = false;
+        var noResultsRow = document.getElementById("noResultsRow");
+
+        // Remove existing "No products available" row if it exists
+        if (noResultsRow) {
+            noResultsRow.remove();
+        }
+
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[1]; // Search by Product Name (index 1)
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                    found = true;
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+
+        // Show message if no products found
+        if (!found) {
+            noResultsRow = table.insertRow(-1);
+            noResultsRow.id = "noResultsRow";
+            var cell = noResultsRow.insertCell(0);
+            cell.colSpan = "8"; // Set the colspan to match the number of columns
+            cell.textContent = "No products available";
+        }
+    }
+</script>
+
+<footer class="main-footer font-xs">
+    <div class="row pb-30 pt-15">
+        <div class="col-sm-6">
+            <script>
+                document.write(new Date().getFullYear());
+            </script>
+            &copy; Nest - HTML Ecommerce Template .
+        </div>
+        <div class="col-sm-6">
+            <div class="text-sm-end">All rights reserved</div>
+        </div>
+    </div>
+</footer>
+
+<script src="/js/vendors/jquery-3.6.0.min.js"></script>
+<script src="/js/vendors/bootstrap.bundle.min.js"></script>
+<script src="/js/vendors/select2.min.js"></script>
+<script src="/js/vendors/perfect-scrollbar.js"></script>
+<script src="/js/vendors/jquery.fullscreen.min.js"></script>
+<!-- Main Script -->
+<script src="/js/main.js?v=1.1" type="text/javascript"></script>
+
+<%- include('../adminlayout/footer.ejs') %>

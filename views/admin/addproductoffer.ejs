@@ -1,0 +1,155 @@
+<%- include('../adminlayout/header.ejs') %>
+
+<div class="content-main">
+  <div class="row">
+    <div class="col-12">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h4>Add Product Offer</h4>
+        </div>
+        <div class="card-body">
+          <!-- SweetAlert script for displaying success or error messages -->
+          <% if (typeof error !== 'undefined') { %>
+            <% console.log("Error:", error); %>
+          <% } %>
+          <% if (success) { %>
+            <script>
+              console.log("Inside success block");
+              Swal.fire('Success', '<%= success %>', 'success');
+            </script>
+          <% } else if (error) { %>
+            <script>
+              console.log("Inside error block");
+              Swal.fire('Error', '<%= error %>', 'error');
+            </script>
+          <% } %>
+          
+          <!-- Product offer form -->
+          <form id="productOfferForm" action="/admin/productoffer" method="post">
+            <div class="mb-3">
+              <label for="productSelect" class="form-label">Select Product</label>
+              <select class="form-select" id="productSelect" name="productId">
+                <option value="" selected disabled>Select a product</option>
+                <% products.forEach(product => { %>
+                  <option value="<%= product._id %>"><%= product.productName %></option>
+                <% }) %>
+              </select>
+              <div class="invalid-feedback">Please select a product.</div>
+            </div>
+            <div class="mb-3">
+              <label for="offer" class="form-label">Offer (in percentage)</label>
+              <input type="number" class="form-control" id="offer" name="productOffer" />
+              <div class="invalid-feedback">Please enter a valid offer percentage greater than zero.</div>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+
+
+          <div class="row">
+            <div class="col-12">
+              <div class="card mb-4">
+                <div class="card-header">
+                  <h4>Product Offers</h4>
+                </div>
+                <div class="card-body">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Product</th>
+                        <th>Offer (%)</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% productOffers.forEach(offer => { %>
+                        <tr>
+                          <td><%= offer.product ? offer.product.productName : 'Product Not Found' %></td>
+                          <td><%= offer.productOffer %></td>
+                          <td>
+                            <form action="/admin/productoffer/delete/<%= offer._id %>" method="post">
+                              <button type="submit" class="btn btn-delete btn-danger">Delete</button>
+                            </form>
+                          </td>
+                        </tr>
+                      <% }) %>                      
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+<%- include('../adminlayout/footer.ejs') %>
+<!-- SweetAlert CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script>
+  // JavaScript validation
+  document.getElementById('productOfferForm').addEventListener('submit', function(event) {
+    // Get form inputs
+    var productId = document.getElementById('productSelect').value;
+    var productOffer = document.getElementById('offer').value;
+
+    // Validate inputs
+    if (!productId || productOffer === '' || parseFloat(productOffer) <= 0) {
+      // Prevent form submission
+      event.preventDefault();
+      event.stopPropagation();
+
+      // Show validation error message
+      if (!productId) {
+        document.getElementById('productSelect').classList.add('is-invalid');
+      } else {
+        document.getElementById('productSelect').classList.remove('is-invalid');
+      }
+      if (productOffer === '' || parseFloat(productOffer) <= 0) {
+        document.getElementById('offer').classList.add('is-invalid');
+      } else {
+        document.getElementById('offer').classList.remove('is-invalid');
+      }
+    } else {
+      // Clear any previous validation errors
+      document.getElementById('productSelect').classList.remove('is-invalid');
+      document.getElementById('offer').classList.remove('is-invalid');
+    }
+  });
+
+  document.addEventListener('click', function(event) {
+    if (event.target.classList.contains('btn-delete')) {
+      var offerId = event.target.getAttribute('data-offer-id');
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'You will not be able to recover this offer!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fetch('/admin/productoffer/delete/' + offerId, {
+            method: 'POST'
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              // If deletion is successful, show SweetAlert success message
+              Swal.fire('Deleted!', data.message, 'success');
+              // Reload the page or update the UI as necessary
+              location.reload();
+            } else {
+              // If deletion fails, show SweetAlert error message
+              Swal.fire('Error', data.error, 'error');
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            // If an error occurs during deletion, show SweetAlert error message
+            Swal.fire('Error', 'An error occurred while deleting the offer.', 'error');
+          });
+        }
+      });
+    }
+  });
+
+
+</script>

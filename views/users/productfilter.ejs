@@ -1,0 +1,228 @@
+<%- include('../userlayout/header.ejs') %>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+
+<!--start page content-->
+<div class="page-content">
+
+
+   <!--start breadcrumb-->
+   <div class="py-4 border-bottom">
+    <div class="container-fluid">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0"> 
+          <li class="breadcrumb-item"><a href="javascript:;">Home</a></li>
+          <li class="breadcrumb-item"><a href="javascript:;">Shop</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Products</li>
+        </ol>
+      </nav>
+    </div>
+   </div>
+   <!--end breadcrumb-->
+   <!--start product grid-->
+   <section class="py-4">
+    <h5 class="mb-0 fw-bold d-none">Product Grid</h5>
+    <div class="container-fluid">
+      <div class="btn btn-dark btn-ecomm d-xl-none position-fixed top-50 start-0 translate-middle-y"  data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbarFilter"><span><i class="bi bi-funnel me-1"></i> Filters</span></div>
+       <div class="row">
+          <div class="col-12 col-xl-2 filter-column">
+              <nav class="navbar navbar-expand-xl flex-wrap p-0">
+                <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbarFilter" aria-labelledby="offcanvasNavbarFilterLabel">
+                  <div class="offcanvas-header">
+                    <h5 class="offcanvas-title mb-0 fw-bold" id="offcanvasNavbarFilterLabel">Filters</h5>
+                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                  </div>
+                  <div class="offcanvas-body">
+                    <div class="filter-sidebar">
+                      <div class="card rounded-0">
+                        <div class="card-header d-none d-xl-block bg-transparent">
+                            <h5 class="mb-0 fw-bold">Filters</h5>
+                        </div>
+                        <div class="card-body">
+                          <h6 class="p-1 fw-bold bg-light">Categories</h6>
+                          <div class="categories">
+                            <div class="categories-wrapper height-1 p-1">
+                              <% categories.forEach(category => { %>
+                                <div class="form-check">
+                                  <input class="form-check-input" type="checkbox" value="<%= category._id %>" id="chekCate<%= category._id %>" <% if (category._id.toString() === req.query.categoryId) { %> checked <% } %>>
+                                  <label class="form-check-label" for="chekCate<%= category._id %>">
+                                    <span><%= category.categoryName %></span>
+                                  </label>
+                                </div>
+                              <% }) %>
+                              
+                              
+                            </div>
+                         </div>
+                        
+        
+                        </div>
+                        <hr>
+                        <div class="Price">
+                         <h6 class="p-1 fw-bold bg-light">Price</h6>
+                         <div class="Price-wrapper p-1">
+                           <div class="input-group">
+                             <input type="text" id="minPrice" class="form-control rounded-0" placeholder="Min Price">
+                             <span class="input-group-text bg-section-1 border-0">-</span>
+                             <input type="text" id="maxPrice" class="form-control rounded-0" placeholder="Max Price">
+                             <button type="button" class="btn btn-outline-dark rounded-0 ms-2" onclick="handleCategoryFilter()"><i class="bi bi-chevron-right"></i></button>
+                           </div>
+                         </div>
+                       </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </nav>
+          </div>
+          <div class="col-12 col-xl-10">
+            <!-- <% if (!productsFound) { %>
+              <div class="col-12">
+                <p>No products found</p>
+              </div>
+            <% } %> -->
+            
+            <div class="shop-right-sidebar">
+             
+              <div id="productGridContainer" class="product-grid mt-4 row row-cols-1 row-cols-md-2 row-cols-lg-4">
+                <% if (productData ) { %>
+                  <!-- This is where the filtered products will be appended -->
+                  <% productData.forEach(product => { %>
+                    <div class="col-6 col-md-4 col-lg-3 mb-4">
+              
+                      <div class="card border shadow-none h-100">
+                        <div class="position-relative overflow-hidden">
+                          <!-- Product options -->
+                          <div class="product-options d-flex align-items-center justify-content-center gap-2 mx-auto position-absolute bottom-0 start-0 end-0">
+                            <a href="javascript:;"><i class="bi bi-heart"></i></a>
+                            <a href="javascript:;"><i class="bi bi-basket3"></i></a>
+                            <a href="javascript:;"><i class="bi bi-zoom-in"></i></a>
+                          </div>
+                          <!-- Product image -->
+                          <a href="javascript:;" onclick="displayProductDetails('<%= product._id %>')">
+                            <img src="/product/<%= product.productImg[0] %>" class="card-img-top" alt="<%= product.productName %>" style="width: 100%; height: 333px;">
+                          </a>
+                        </div>
+                        <div class="card-body border-top">
+                          <!-- Product details -->
+                          <h5 class="mb-0 fw-bold product-short-title"><%= product.productName %></h5>
+                          <div class="product-price d-flex align-items-center gap-2 mt-2">
+                            <!-- Product price -->
+                            <div class="h6 fw-bold">₹<%= product.price %></div>
+                            <div class="h6 fw-light text-muted text-decoration-line-through">₹<%= product.oldPrice %></div>
+                            <div class="h6 fw-bold text-danger">(<%= product.discount %> off)</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  <% }) %>
+                  <% } %>
+                    <!-- Display a message when there are no filtered products -->
+                   
+                </div>
+                
+                <% if (!productData || productData.length === 0) { %>
+                  <div class="col-12">
+                    <p>No products found</p>
+                  </div>
+                <% } %>
+                </div><!-- end row -->
+              </div><!-- end product-grid -->
+          
+            </div>
+          </div>
+       </div><!--end row-->
+    </div>
+  </section>
+   <!--start product details-->
+ </div>
+  <!--end page content-->
+  <%- include('../userlayout/header.ejs') %>
+
+
+  <script>
+    // Function to generate HTML markup for a product card
+    const generateProductCardHTML = (product) => {
+      return `
+        <div class="col-6 col-md-4 col-lg-3 mb-4">
+          <div class="card border shadow-none h-100">
+            <div class="position-relative overflow-hidden">
+              <!-- Product options -->
+              <div class="product-options d-flex align-items-center justify-content-center gap-2 mx-auto position-absolute bottom-0 start-0 end-0">
+                <a href="javascript:;"><i class="bi bi-heart"></i></a>
+                <a href="javascript:;"><i class="bi bi-basket3"></i></a>
+                <a href="javascript:;"><i class="bi bi-zoom-in"></i></a>
+              </div>
+              <!-- Product image -->
+              <a href="javascript:;" onclick="displayProductDetails('${product._id}')">
+                <img src="/product/${product.productImg[0]}" class="card-img-top" alt="${product.productName}" style="width: 100%; height: 333px;">
+              </a>
+            </div>
+            <div class="card-body border-top">
+              <!-- Product details -->
+              <h5 class="mb-0 fw-bold product-short-title">${product.productName}</h5>
+              <div class="product-price d-flex align-items-center gap-2 mt-2">
+                <!-- Product price -->
+                <div class="h6 fw-bold">$${product.price}</div>
+                <div class="h6 fw-light text-muted text-decoration-line-through">₹${product.oldPrice}</div>
+              
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    };
+    const handleCategoryFilter = async () => {
+  // Get the selected category checkboxes
+  const selectedCategories = document.querySelectorAll('.form-check-input:checked');
+  const categoryIds = Array.from(selectedCategories).map(category => category.value);
+
+  // Get the price range
+  const minPrice = document.getElementById('minPrice').value;
+  const maxPrice = document.getElementById('maxPrice').value;
+
+  try {
+    // Make an Axios request to the server
+    const response = await axios.post('/filterProducts', { categoryIds, minPrice, maxPrice });
+
+    const filteredProducts = response.data.productData;
+console.log('filtered products:', filteredProducts);
+
+// Get the container for product grid
+const productGridContainer = document.getElementById('productGridContainer');
+
+if (productGridContainer !== null) {
+  // Clear existing products
+  productGridContainer.innerHTML = '';
+
+  // Render filtered products if available
+  if (filteredProducts.length > 0) {
+    filteredProducts.forEach(product => {
+      // Generate HTML markup for the product card
+      const productCardHTML = generateProductCardHTML(product);
+      // Append the product card to the container
+      productGridContainer.innerHTML += productCardHTML;
+    });
+  } else {
+    // If no products found, display a message
+    productGridContainer.innerHTML = '<div class="col-12"><p>No products found</p></div>';
+  }
+}
+  } catch (error) {
+    console.error('Error filtering products:', error);
+  }
+};
+
+
+ // Add event listener to category checkboxes
+document.querySelectorAll('.form-check-input').forEach(checkbox => {
+  checkbox.addEventListener('change', () => {
+    handleCategoryFilter();
+  });
+});
+
+  const displayProductDetails = (productId) => {
+
+    window.location.href = `/product/${productId}`;
+  };
+  </script>

@@ -1,0 +1,205 @@
+<%- include('../userlayout/header.ejs') %>
+
+<div class="page-content">
+  <section class="section-padding">
+   <div class="container">
+      <div class="d-flex align-items-center px-3 py-2 border mb-4">
+       <div class="text-start">
+         <h4 class="mb-0 h4 fw-bold">Account - Orders</h4>
+      </div>
+     </div>
+     <div class="btn btn-dark btn-ecomm d-xl-none position-fixed top-50 start-0 translate-middle-y"  data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbarFilter"><span><i class="bi bi-person me-2"></i>Account</span></div>
+      <div class="row">
+         <div class="col-12 col-xl-3 filter-column">
+             <nav class="navbar navbar-expand-xl flex-wrap p-0">
+               <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbarFilter" aria-labelledby="offcanvasNavbarFilterLabel">
+                 <div class="offcanvas-header">
+                   <h5 class="offcanvas-title mb-0 fw-bold text-uppercase" id="offcanvasNavbarFilterLabel">Account</h5>
+                   <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                 </div>
+                 <div class="offcanvas-body account-menu">
+                  <div class="list-group w-100 rounded-0">
+                    <a href="/userdashboard" class="list-group-item "><i class="bi bi-house-door me-2"></i>Dashboard</a>
+                    <a href="/order/viewOrder" class="list-group-item active"><i class="bi bi-basket3 me-2"></i>Orders</a>
+                    <a href="/userdetails" class="list-group-item"><i class="bi bi-person me-2"></i>Profile</a>
+                    <a href="/editdetails" class="list-group-item"><i class="bi bi-pencil me-2"></i>Edit Profile</a>
+                    <a href="/updatepassword" class="list-group-item"><i class="bi bi-pencil me-2"></i>Change Password</a>
+                    <a href="/address/loadSavedaddress" class="list-group-item"><i class="bi bi-pin-map me-2"></i>Saved Address</a>
+                    <a href="/cart/wishlist" class="list-group-item"><i class="bi bi-suit-heart me-2"></i>Wishlist</a>
+                    <a href="/wallet" class="list-group-item"><i class="bi bi-basket3 me-2"></i>wallet</a>
+                    <a href="/logout" class="list-group-item"><i class="bi bi-power me-2"></i>Logout</a>
+                  </div>
+                </div>
+               </div>
+           </nav>
+         </div>
+         <div class="col-12 col-xl-9">
+
+          <% orders.forEach(order => { %>
+            <div class="card rounded-0 mb-3">
+              <div class="card-body">
+                <div class="d-flex flex-column flex-xl-row gap-3">
+                  <div class="product-img">
+                    <img src="/product/<%= order.ordered.productImg[0] %>" width="120" alt="">
+                  </div>
+                  <div class="product-info flex-grow-1">
+                    <h5 class="fw-bold mb-1"><%= order.ordered.productName %></h5>
+                    <p class="mb-0">Status: <%= order.items.status %></p>
+                    <p class="mb-0">Price: <%= Math.floor(order.items.price) %></p>
+                    <p class="mb-0">Color: <%= order.ordered.colour %></p>
+                    <div class="mt-3 hstack gap-2">
+                      <button type="button" class="btn btn-sm border rounded-0">Qty : <%= order.items.quantity %></button>
+                    </div>
+                  </div>
+                  <div class="d-grid align-self-start align-self-xl-center">
+                    <button type="button" class="btn btn-outline-dark btn-ecomm">
+                      <a href="/order/viewdetails/<%= order._id %>/<%= order.items.product_id._id %>">View Details</a>
+                    </button>
+                    <% if (order.items.status !== 'cancelled'&& order.items.status == 'delivered') { %>
+                      <button type="button" class="btn btn-outline-dark btn-ecomm">
+                        <a href="/order/downloadinvoice/<%= order._id %>/<%= order.items.product_id._id %>">Download Invoice</a>
+                      </button>
+                    <% } %>
+                    
+                    <% if (order.items.status === 'pending' || order.items.status === 'shipped') { %>
+                      <button type="button" class="btn btn-warning cancel-btn" data-href="/order/cancel/<%= order._id %>/<%= order.items.product_id._id %>">Cancel Order</button>
+                    <% } else if (order.items.status === 'delivered') { %>
+                      <button type="button" class="btn btn-danger return-btn" data-href="/order/return/<%= order._id %>/<%= order.items.product_id._id %>">Return Order</button>
+                    <% } else if (order.items.status === 'cancelled') { %>
+                      <p class="text-danger">This order has been cancelled.</p>
+                    <% } else if (order.items.status === 'returned')  { %>
+                      <p class="text-danger">This order has been returned.</p>
+                    <% } %>
+                    <% if (order.paymentStatus === 'Pending' && order.payment === 'Razorpay') { %>
+                      <button type="button" class="btn btn-ecomm btn-dark w-100 py-3 px-5" onclick="confirmRazorpayPayment('<%= order._id %>', '<%= order.totalAmount %>', '<%= order.billingAddress %>')">Pay Now</button>
+
+                  <% } %>
+                  
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% }); %>
+        </div>
+
+<div class="pagination">
+  <% if (page > 1) { %>
+      <a href="/order/viewOrder?page=<%= page - 1 %>&pageSize=<%= pageSize %>">
+        <i class="bi bi-chevron-left"></i> Previous
+      </a>
+  <% } %>
+  <% if (orders.length === pageSize) { %>
+      <a href="/order/viewOrder?page=<%= page + 1 %>&pageSize=<%= pageSize %>">
+        Next <i class="bi bi-chevron-right"></i>
+      </a>
+  <% } %>
+</div>
+
+
+      </div>
+   </div>
+ </section>
+</div>
+
+<%- include('../userlayout/footer.ejs') %>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script>
+  document.querySelectorAll('.cancel-btn, .return-btn').forEach((button) => {
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      const action = button.classList.contains('cancel-btn') ? 'cancel' : 'return';
+      swal({
+        title: "Are you sure?",
+        text: `Are you sure you want to ${action} this order?`,
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      })
+      .then((willDelete) => {
+        if (willDelete) {
+          window.location.href = button.dataset.href;
+        }
+      });
+    });
+  });
+
+
+
+  
+</script>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+ function confirmRazorpayPayment(orderId, totalAmount, selectedAddressId) {
+    const formattedAmount = (totalAmount * 100).toFixed(0);
+    var options = {
+      key: '<%= razorpaykey %>',
+      amount: formattedAmount,
+      currency: 'INR',
+      name: 'AK AUDIOS',
+      description: 'Order Payment',
+      handler: async function (response) {
+    console.log('Razorpay payment response:', response);
+
+    if (response.razorpay_payment_id) {
+        console.log('Razorpay payment success');
+
+        window.location.href = `/order/razorthanku?orderId=${orderId}`;
+    } else {
+        console.log('Razorpay payment failed');
+        alert('Payment failed. Please try again.');
+    }
+},
+
+      prefill: {
+        name: 'User Name',
+        email: 'user@example.com',
+        contact: '1234567890',
+      },
+      notes: {
+        address: 'User Address',
+      },
+      theme: {
+        color: '#012652',
+      },
+    };
+
+    var rzp = new Razorpay(options);
+    rzp.open();
+  }
+
+</script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script>
+  document.querySelectorAll('.return-btn').forEach((button) => {
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      const action = button.classList.contains('return-btn') ? 'return' : 'cancel';
+      swal({
+        title: "Are you sure?",
+        text: `Are you sure you want to ${action} this order?`,
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      })
+      .then((willDelete) => {
+        if (willDelete) {
+          window.location.href = button.dataset.href;
+        }
+      });
+    });
+  });
+
+  // Handle the successful order cancellation response
+  window.addEventListener('DOMContentLoaded', () => {
+    const successMessage = "<%= message %>";
+    if (successMessage === "Order cancelled successfully") {
+      swal({
+        title: "Success!",
+        text: "Order returned successfully",
+        icon: "success",
+      });
+    }
+  });
+</script>
+ 

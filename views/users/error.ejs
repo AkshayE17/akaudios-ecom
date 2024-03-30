@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Error Page</title>
+  <style>
+    body {
+      background-color: #0D1B2A; /* Dark blue background */
+      width: 100vw;
+      height: 100vh;
+      color: #F5F5F5; /* Light gray text */
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .error-num {
+      font-size: 8em;
+    }
+
+    .eye {
+      background: #F5F5F5; /* Light gray eye */
+      border-radius: 50%;
+      display: inline-block;
+      height: 100px;
+      position: relative;
+      width: 100px;
+    }
+
+    .eye::after {
+      background: #000; /* Black pupil */
+      border-radius: 50%;
+      bottom: 56.1px;
+      content: '';
+      height: 33px;
+      position: absolute;
+      right: 33px;
+      width: 33px;
+    }
+
+    p {
+      margin-bottom: 2em;
+    }
+
+    a {
+      color: #F5F5F5; /* Light gray link */
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.3s ease; /* Smooth color transition */
+    }
+
+    a:hover {
+      color: #66FCF1; /* Light blue hover color */
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <span class='error-num'>5</span>
+    <div class='eye'></div>
+    <div class='eye'></div>
+    <p class='sub-text'>Oops! Something went wrong. We're <i>looking</i> into it.</p>
+    <a href='/'>Go back</a>
+  </div>
+
+  <script>
+    document.body.addEventListener('mousemove', function(event) {
+      var eyes = document.querySelectorAll('.eye');
+      eyes.forEach(function(eye) {
+        var x = eye.offsetLeft + (eye.offsetWidth / 2);
+        var y = eye.offsetTop + (eye.offsetHeight / 2);
+        var rad = Math.atan2(event.pageX - x, event.pageY - y);
+        var rot = (rad * (180 / Math.PI) * -1) + 180;
+        eye.style.transform = 'rotate(' + rot + 'deg)';
+      });
+    });
+  </script>
+</body>
+</html>

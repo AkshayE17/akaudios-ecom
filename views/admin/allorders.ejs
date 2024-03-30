@@ -1,0 +1,157 @@
+<%- include('../adminlayout/header.ejs') %>
+
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Order List</h2>
+
+        </div>
+        <div>
+            <input type="text" placeholder="Search order ID" class="form-control bg-white" />
+        </div>
+    </div>
+    <div class="card mb-4">
+        <header class="card-header">
+            <div class="row gx-3">
+                <div class="col-lg-4 col-md-6 me-auto">
+                    <input type="text" placeholder="Search..." class="form-control" />
+                </div>
+                <div class="col-lg-2 col-6 col-md-3">
+                    <select class="form-select">
+                        <option>Status</option>
+                        <option>Active</option>
+                        <option>Disabled</option>
+                        <option>Show all</option>
+                    </select>
+                </div>
+                <div class="col-lg-2 col-6 col-md-3">
+                    <select class="form-select">
+                        <option>Show 20</option>
+                        <option>Show 30</option>
+                        <option>Show 40</option>
+                    </select>
+                </div>
+            </div>
+        </header>
+        <!-- card-header end// -->
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Total</th>
+                            <th>Payment Method</th> <!-- Add this line for the new column -->
+                            <th>Date</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% orders.forEach(order => { %>
+                        <tr>
+                            <td><%= order._id %></td>
+                            <td><b><%= order.user.name %></b></td>
+                            <td><%= order.user.email %></td>
+                            <td>₹<%= order.totalAmount.toFixed(2) %></td>
+                            <td><%= order.payment %></td> <!-- Add this line to display the payment method -->
+                            <td><%= order.createdAt.toDateString() %></td>
+                            <td class="text-end">
+                                <a href="/admin/order/<%= order._id %>" class="btn btn-md rounded font-sm">Detail</a>
+                                <div class="dropdown">
+                                    <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="#">View detail</a>
+                                        <a class="dropdown-item" href="#">Edit info</a>
+                                        <a class="dropdown-item text-danger" href="#">Delete</a>
+                                    </div>
+                                </div>
+                                <!-- dropdown //end -->
+                            </td>
+                        </tr>
+                        <% }); %>
+                    </tbody>
+                    
+                </table>
+            </div>
+            <!-- table-responsive //end -->
+        </div>
+        <!-- card-body end// -->
+    </div>
+    <!-- card end// -->
+    <div class="pagination-area mt-15 mb-50">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-start">
+                <li class="page-item active"><a class="page-link" href="#">01</a></li>
+                <li class="page-item"><a class="page-link" href="#">02</a></li>
+                <li class="page-item"><a class="page-link" href="#">03</a></li>
+                <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                <li class="page-item"><a class="page-link" href="#">16</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</section>
+
+<%- include('../adminlayout/footer.ejs') %>
+    
+    
+    
+    
+    
+    <footer class="main-footer font-xs">
+        <div class="row pb-30 pt-15">
+            <div class="col-sm-6">
+                <script>
+                    document.write(new Date().getFullYear());
+                </script>
+                &copy; Nest - HTML Ecommerce Template .
+            </div>
+            <div class="col-sm-6">
+                <div class="text-sm-end">All rights reserved</div>
+            </div>
+        </div>
+    </footer>
+</main>
+<script src="/js/vendors/jquery-3.6.0.min.js"></script>
+<script src="/js/vendors/bootstrap.bundle.min.js"></script>
+<script src="/js/vendors/select2.min.js"></script>
+<script src="/js/vendors/perfect-scrollbar.js"></script>
+<script src="/js/vendors/jquery.fullscreen.min.js"></script>
+<!-- Main Script -->
+<script src="/js/main.js?v=1.1" type="text/javascript"></script>
+
+
+<script>
+    // Function to handle category deletion
+    function deleteCategory(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You will not be able to recover this category!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // If confirmed, redirect to delete route
+                window.location.href = '/admin/category/deletecategory/' + id;
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                Swal.fire('Cancelled', 'Your category is safe :)', 'error');
+            }
+        });
+    }
+
+    // Attach click event listener to delete buttons
+    const deleteButtons = document.querySelectorAll('.delete-category');
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const categoryId = button.getAttribute('data-id');
+            deleteCategory(categoryId);
+        });
+    });
+</script>

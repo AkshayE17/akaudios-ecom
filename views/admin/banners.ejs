@@ -1,0 +1,168 @@
+<%- include('../adminlayout/header.ejs') %>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card mb-4">
+      <div class="card-header">
+        <h4>Add Banner</h4>
+      </div>
+      <div class="card-body">
+        <!-- Banner form -->
+        <form action="/admin/banner" method="post" enctype="multipart/form-data" id="bannerForm">
+         
+          <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" class="form-control" id="title" name="title" />
+            <div id="titleError" class="text-danger"></div>
+          </div>
+          <div class="mb-3">
+            <label for="subtitle" class="form-label">Subtitle</label>
+            <input type="text" class="form-control" id="subtitle" name="subtitle" />
+            <div id="subtitleError" class="text-danger"></div>
+          </div>
+          <div class="mb-3">
+            <label for="image" class="form-label">Image</label>
+            <input type="file" class="form-control" id="image" name="image" />
+            <div id="imageError" class="text-danger"></div>
+           </div>
+           
+          <div class="mb-3">
+            <label for="color" class="form-label">Color</label>
+            <input type="text" class="form-control" id="color" name="color" />
+            <div id="colorError" class="text-danger"></div>
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="row">
+ <div class="col-12"> 
+    <div class="card mb-4">
+      <div class="card-header">
+        <h4>Banners</h4>
+      </div>
+      <div class="card-body">
+        <% if (banners.length > 0) { %>
+          <div class="row">
+            <% banners.forEach(function(banner) { %>
+              <div class="col-md-4">
+                 <div class="card mb-4">
+                   <img src="/banners/<%= banner.image %>" class="card-img-top" alt="Banner Image" style="max-width: 100%; height: auto;">
+                   <div class="card-body">
+                     <h5 class="card-title"><%= banner.title %></h5>
+                     <p class="card-text"><%= banner.subtitle %></p>
+                     <p class="card-text"><small class="text-muted">Color: <%= banner.color %></small></p>
+                     <a href="/admin/banner/editbanner/<%= banner._id %>" class="btn btn-primary">Edit</a>
+                     <button type="button" class="btn btn-danger btn-delete" data-id="<%= banner._id %>">Delete</button>
+                   </div>
+                 </div>                 
+              </div>
+             <% }); %>             
+           </div>
+        <% } else { %>
+          <p>No banners available.</p>
+        <% } %>
+      </div>
+    </div>
+ </div>
+</div>
+
+
+
+<!-- SweetAlert script and form validation script -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script>
+  document.getElementById('bannerForm').addEventListener('submit', function(event) {
+    var title = document.getElementById('title');
+    var titleError = document.getElementById('titleError');
+    var subtitle = document.getElementById('subtitle');
+    var subtitleError = document.getElementById('subtitleError');
+    var image = document.getElementById('image');
+    var imageError = document.getElementById('imageError');
+    var color = document.getElementById('color');
+    var colorError = document.getElementById('colorError');
+
+    // Validate title
+    if (title.value === '') {
+      titleError.textContent = 'Please enter a title.';
+      event.preventDefault();
+    } else {
+      titleError.textContent = '';
+    }
+
+    // Validate subtitle
+    if (subtitle.value === '') {
+      subtitleError.textContent = 'Please enter a subtitle.';
+      event.preventDefault();
+    } else {
+      subtitleError.textContent = '';
+    }
+
+    // Validate image URL
+    if (image.value === '') {
+      imageError.textContent = 'Please enter an image URL.';
+      event.preventDefault();
+    } else {
+      imageError.textContent = '';
+    }
+
+    // Validate color
+    if (color.value === '') {
+      colorError.textContent = 'Please enter a color.';
+      event.preventDefault();
+    } else {
+      colorError.textContent = '';
+    }
+  });
+</script>
+
+
+<script>
+  document.addEventListener('click', function(event) {
+     if (event.target.classList.contains('btn-delete')) {
+       event.preventDefault(); // Prevent the form from submitting
+       var bannerId = event.target.getAttribute('data-id'); // Get the banner ID from the data-id attribute
+ 
+       Swal.fire({
+         title: 'Are you sure?',
+         text: 'You will not be able to recover this banner!',
+         icon: 'warning',
+         showCancelButton: true,
+         confirmButtonColor: '#d33',
+         cancelButtonColor: '#3085d6',
+         confirmButtonText: 'Yes, delete it!'
+       }).then((result) => {
+         if (result.isConfirmed) {
+           fetch('/admin/banner/delete/' + bannerId, {
+             method: 'POST', // Ensure this is a POST request
+             headers: {
+               'Content-Type': 'application/json', // Set the content type to JSON
+             },
+             body: JSON.stringify({ id: bannerId }) // Send the banner ID in the request body
+           })
+           .then(response => response.json())
+           .then(data => {
+             if (data.message) {
+               Swal.fire('Deleted!', data.message, 'success');
+               location.reload(); // Reload the page to reflect the changes
+             } else {
+               Swal.fire('Error', data.error, 'error');
+             }
+           })
+           .catch(error => {
+             console.error('Error:', error);
+             Swal.fire('Error', 'An error occurred while deleting the banner.', 'error');
+           });
+         }
+       });
+     }
+  });
+ </script>
+ 
+ 
+<%- include('../adminlayout/footer.ejs') %>
