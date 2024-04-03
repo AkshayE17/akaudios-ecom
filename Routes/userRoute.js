@@ -26,10 +26,10 @@ userRoute.post('/forgot-password', auth.isLogout,userController.forgotPassword);
 userRoute.post('/forgot-otp', auth.isLogout,userController.forgototp);
 userRoute.post('/change-password',auth.isLogout,auth.isBlocked, userController.changePassword);
 userRoute.get('/product/:id', productController.productDetails);
-userRoute.get('/productfilter', auth.isLogin,productController.loadProductfiller);
+userRoute.get('/productfilter',productController.loadProductfiller);
 userRoute.post('/filterProducts', productController.filterProducts);
 userRoute.get('/wallet',auth.isLogin,wallerController.loadwallet);
 userRoute.post('/addwallet',auth.isLogin,wallerController.addwallet);
 userRoute.post('/wallet/addMoney',auth.isLogin,wallerController.addMoney);
 
-export default userRoute;
+export default userRoute;  

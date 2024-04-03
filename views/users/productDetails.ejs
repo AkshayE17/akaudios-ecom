@@ -1,34 +1,38 @@
 
 <%- include('../userlayout/header.ejs') %>
 <style>
-
-    .image{
+  .image {
       position: relative;
-      width: 600px;
-      height:400px;
-      overflow:hidden;
+      padding-bottom: 66.67%; /* 2:3 aspect ratio (400px / 600px) */
+      overflow: hidden;
       border: 2px solid #ff0000;
       box-shadow: -1px 5px 15px #000;
-    
-    }
-    .image img{
-      position:absolute ;
+  }
+  .image img {
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
-      -o-object-fit: cover;
       object-fit: cover;
-      transform: scale(var(--zoom,1));
-      transform-origin: var(--x)var(--y);
+      transform: scale(var(--zoom, 1));
+      transform-origin: var(--x) var(--y);
       transition: transform 0.3s ease;
-    }
-    .image:hover{
+  }
+  .image:hover {
       --zoom: 3;
-    }
-    .rating-box{
-      width: fit-content;
-    }
-    
-  
+  }
+  /* Add other styles as needed */
+
+  /* Media query for mobile screens */
+  @media (max-width: 768px) {
+      .row.g-3 {
+          flex-wrap: nowrap; /* Keep images in a row */
+      }
+      .col-sm-3 {
+          flex: 1; /* Distribute columns evenly */
+      }
+  }
 </style>
 <div class="page-content">
   <section class="py-4">
@@ -39,23 +43,22 @@
               <!-- Display the top image in a larger format -->
               
               <div class="row g-3">
-                  <div class="col position-relative">
-                      <div id="mainImageContainer" class="image" data-fancybox="gallery" data-src="<%= products.productImg[0] %>">
-                          <img id="mainImage" src="/Product/<%= products.productImg[0] %>"  alt="" >
-                      </div>
-                  </div>
-              </div><!--end row-->
-      
-              <!-- Rest of the images -->
-              <div class="row mt-5">
-                  <% for (var i = 1; i < products.productImg.length; i++) { %>
-                  <div class="col-sm-3">
-                      <div class="img-thumb-container overflow-hidden position-relative" data-fancybox="gallery" data-src="<%= products.productImg[i] %>">
-                          <img class="img-thumbnail" src="/Product/<%= products.productImg[i] %>" alt="">
-                      </div>
-                  </div>
-                  <% } %>
-              </div><!--end row-->
+                <div class="col position-relative">
+                    <div id="mainImageContainer" class="image" data-fancybox="gallery" data-src="<%= products.productImg[0] %>">
+                        <img id="mainImage" src="/Product/<%= products.productImg[0] %>" alt="">
+                    </div>
+                </div>
+            </div><!--end row-->
+            <!-- Rest of the images -->
+            <div class="row mt-5">
+                <% for (var i = 1; i < products.productImg.length; i++) { %>
+                <div class="col-sm-3">
+                    <div class="img-thumb-container overflow-hidden position-relative" data-fancybox="gallery" data-src="<%= products.productImg[i] %>">
+                        <img class="img-thumbnail" src="/Product/<%= products.productImg[i] %>" alt="">
+                    </div>
+                </div>
+                <% } %>
+            </div><!--end row-->
           </div>
       </div>
       
@@ -76,14 +79,14 @@
             <div class="product-price d-flex align-items-center gap-3">
               <% if (products.offerPrice && products.offerPrice !== products.price) { %>
                 <div class="h4 fw-bold text-warning">
-                  ₹<%=  products.offerPrice.toFixed(2) %>
+                  ₹<%=  products.offerPrice %>
 
-                  <span style="text-decoration: line-through; color: #999;">₹<%= products.price.toFixed(2) %></span>
+                  <span style="text-decoration: line-through; color: #999;">₹<%= products.price %></span>
 
-                  <span class="text-danger"><%= products.offerPercentage %> % off</span>
+                  <span class="text-success"><%= products.offerPercentage %> % off</span>
                 </div>
               <% } else { %>
-                <div class="h4 fw-bold">₹<%=  products.price.toFixed(2) %></div>
+                <div class="h4 fw-bold">₹<%=  products.price %></div>
               <% } %>
             </div>
             

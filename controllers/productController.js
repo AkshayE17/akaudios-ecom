@@ -11,8 +11,9 @@ const storage = multer.diskStorage({
     cb(null, 'uploads/product');
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname);
-  },
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + '-' + file.originalname);
+  }
 });
 
 const upload = multer({ storage: storage });
@@ -43,8 +44,6 @@ const productDetails = async (req, res) => {
 
     const productOffer = await productOfferModel.findOne({ product: productId });
     const categoryOffer = await categoryOfferModel.findOne({ category: productData.category });
-
-
     const offerPercentage = Math.max(productOffer ? productOffer.productOffer : 0, categoryOffer ? categoryOffer.categoryOffer : 0);
 
 
@@ -92,7 +91,8 @@ const addProduct = async (req, res) => {
           .resize({ width: 300, height: 300, fit: "contain" })
           .toBuffer();
 
-        const filename = `cropped_${req.files[i].originalname}`;
+        // Generate a unique filename for each image
+        const filename = `cropped_${req.files[i].originalname}_${Date.now()}`;
         arrImages[i] = filename;
 
         // Save the cropped image
@@ -126,9 +126,6 @@ const addProduct = async (req, res) => {
     res.status(500).render('error', { message: 'Internal Server Error', success: false, msg: '', product: {} });
   }
 };
-
-
-
 
 
 
@@ -202,6 +199,7 @@ const deleteProductImage = async (req, res) => {
   }
 };
 
+
 const deleteProduct = async (req, res) => {
   try {
     const productId = req.params.id;
@@ -223,6 +221,7 @@ const deleteProduct = async (req, res) => {
   }
 };
 
+
 const loadProductfiller = async (req, res) => {
   try {
     const categoryId = req.query.categoryId;
@@ -232,8 +231,29 @@ const loadProductfiller = async (req, res) => {
       filterConditions.category = categoryId;
     }
     const filteredProducts = await productModel.find(filterConditions);
-    const productsFound = filteredProducts.length > 0;
-    res.render('productfilter', { req, categories, productData: filteredProducts, productsFound });
+
+    // Fetch product offers and category offers
+    const productOffers = await productOfferModel.find();
+    const categoryOffers = await categoryOfferModel.find();
+
+    const productsWithOffer = filteredProducts.map(product => {
+      const productOffer = productOffers.find(offer => offer.product.toString() === product._id.toString());
+      const categoryOffer = categoryOffers.find(offer => offer.category.toString() === product.category.toString());
+      const offerPercentage = productOffer ? productOffer.productOffer : 0;
+      const categoryOfferPercentage = categoryOffer ? categoryOffer.categoryOffer : 0;
+      const finalOfferPercentage = Math.max(offerPercentage, categoryOfferPercentage);
+      const offerPrice = product.price * (1 - finalOfferPercentage / 100);
+      const roundedOfferPrice = Math.round(offerPrice);
+
+      return {
+        ...product.toObject(),
+        offerPrice: roundedOfferPrice,
+        offerPercentage: finalOfferPercentage,
+      };
+    });
+
+    const productsFound = productsWithOffer.length > 0;
+    res.render('productfilter', { req, categories, productData: productsWithOffer, productsFound });
   } catch (error) {
     console.log("Error at filter page loading ", error);
     res.render('error', { error });
@@ -241,15 +261,12 @@ const loadProductfiller = async (req, res) => {
 };
 
 
-
 const filterProducts = async (req, res) => {
   try {
     const categoryIds = Array.isArray(req.body.categoryIds) ? req.body.categoryIds : [req.body.categoryIds];
     const minPrice = parseFloat(req.body.minPrice);
     const maxPrice = parseFloat(req.body.maxPrice);
-
-
-
+    
     let filterConditions = {};
     if (categoryIds.length > 0) {
       filterConditions.category = { $in: categoryIds };
@@ -259,8 +276,23 @@ const filterProducts = async (req, res) => {
     }
 
     const filteredProducts = await productModel.find(filterConditions);
+    const productOffers = await productOfferModel.find();
+    const categoryOffers = await categoryOfferModel.find();
+
+    const populatedProducts = filteredProducts.map(product => {
+      const productOffer = productOffers.find(offer => offer.product.toString() === product._id.toString());
+      const categoryOffer = categoryOffers.find(offer => offer.category.toString() === product.category.toString());
+      const offerPercentage = productOffer ? productOffer.productOffer : 0;
+      const categoryOfferPercentage = categoryOffer ? categoryOffer.categoryOffer : 0;
+      const finalOfferPercentage = Math.max(offerPercentage, categoryOfferPercentage);
+      const offerPrice = product.price * (1 - finalOfferPercentage / 100);
+      const roundedOfferPrice = Math.round(offerPrice);
+
+      return { ...product.toObject(), offerPrice: roundedOfferPrice, offerPercentage: finalOfferPercentage };
+    });
+
     const categories = await categoryModel.find();
-    res.json({ categories, productData: filteredProducts });
+    res.json({ categories, productData: populatedProducts });
 
   } catch (error) {
     console.error('Error filtering products:', error);

@@ -61,7 +61,7 @@
                                     <% if (product.productDetails.stockCount > 0) { %>
                                     <button class="btn btn-sm btn-light border rounded-0 btn-quantity"
                                         data-product-id="<%= product.productDetails._id %>" data-adjustment="-1">-</button>
-                                    <span id="quantity_<%= product.productDetails._id %>"><%= Math.max(0, product.items.quantity) %></span>
+                                        <span id="quantity_<%= product.productDetails._id %>" data-stock-count="<%= product.productDetails.stockCount %>"><%= Math.max(0, product.items.quantity) %></span>
                                     <button class="btn btn-sm btn-light border rounded-0 btn-quantity"
                                         data-product-id="<%= product.productDetails._id %>" data-adjustment="1">+</button>
                                     <% } else { %>
@@ -157,22 +157,65 @@
 </section>
 </div>
 <%- include('../userlayout/footer.ejs') %>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
 $(document).on('click', '.btn-quantity', function () {
- var productId = $(this).data('product-id');
-var adjustment = parseInt($(this).data('adjustment'));
-updateQuantity(productId, adjustment);
-    });
-    function updateQuantity(productId, adjustment) {
+    var productId = $(this).data('product-id');
+    var adjustment = parseInt($(this).data('adjustment'));
+    updateQuantity(productId, adjustment);
+});
 
+function updateQuantity(productId, adjustment) {
     var currentQuantity = parseInt($('#quantity_' + productId).text());
-    // Calculate the new quantity
+    var stockCount = parseInt($('#quantity_' + productId).data('stock-count')); // Get the stock count from data attribute
     var newQuantity = currentQuantity + adjustment;
+
     if (newQuantity <= 0) {
-        // Prevent the quantity from going to zero or less
-        alert('You cannot remove all items from your cart.');
-        return; // Exit the function early
+        // Ask for confirmation to remove the item
+        console.log('Quantity is zero or less. Showing Swal alert...');
+        Swal.fire({
+            title: 'Remove Item',
+            text: 'Do you want to remove this item from the cart?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'No'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                console.log('User confirmed. Proceeding with removal...');
+                // If user confirms, call the remove from cart action
+                $.ajax({
+                    url: '/cart/remove-from-cart/' + productId,
+                    method: 'POST',
+                    success: function (response) {
+                        // Handle success response
+                        window.location.reload(); // Reload the page after successful removal
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('AJAX error:', error);
+                    }
+                });
+            }
+        });
+        return;
+    } else if (newQuantity > stockCount) {
+        console.log('Stock limit reached. Showing Swal alert...');
+        Swal.fire({
+            title: 'Stock Limit Reached',
+            text: 'The quantity you requested exceeds our current stock.',
+            icon: 'info',
+            confirmButtonText: 'OK'
+        });
+        return;
+    } else if (newQuantity === parseInt($('#quantity_' + productId).text())) {
+        console.log('Quantity limit reached. Showing Swal alert...');
+        Swal.fire({
+            title: 'Limit Reached',
+            text: 'You have reached the limit for this item.',
+            icon: 'info',
+            confirmButtonText: 'OK'
+        });
     }
 
     // Proceed with the update if the new quantity is valid
@@ -185,7 +228,7 @@ updateQuantity(productId, adjustment);
         },
         success: function (response) {
             if (response.error) {
-                alert(response.error); 
+                alert(response.error);
             } else {
                 $('#quantity_' + productId).text(response.quantity);
                 $('#bagtotal').text('₹' + response.totalAmount);

@@ -11,7 +11,6 @@ import Mailgen from 'mailgen';
 import Swal from 'sweetalert2';
 
 
-//Password hashing
 const securePassword = async (password) => {
   try {
     const passwordHash = await bcrypt.hash(password, 10);
@@ -31,9 +30,8 @@ const homeLoad = async (req, res) => {
     const categoryOffers = await categoryOfferModel.find();
     const banners= await bannerModel.find();
 
-    const isLoggedIn = req.session.isLoggedIn; // Assuming isLoggedIn is set in the session
+    const isLoggedIn = req.session.isLoggedIn;
 
-    // Determine if the user has just logged in
     const justLoggedIn = req.session.justLoggedIn;
     delete req.session.justLoggedIn; 
     
@@ -44,10 +42,12 @@ const homeLoad = async (req, res) => {
       const categoryOfferPercentage = categoryOffer ? categoryOffer.categoryOffer : 0;
       const finalOfferPercentage = Math.max(offerPercentage, categoryOfferPercentage);
       const offerPrice = product.price * (1 - finalOfferPercentage / 100);
+      const roundedOfferPrice = Math.round(offerPrice);
+
       return {
         ...product.toObject(),
-        offerPrice,
-        offerPercentage: finalOfferPercentage // Include offer percentage
+        offerPrice: roundedOfferPrice,
+        offerPercentage: finalOfferPercentage,
       };
     });
 
@@ -147,9 +147,10 @@ const signup = async (req, res) => {
 const verifyotp = async (req, res) => {
   try {
     const enteredOtp = req.body.otp;
-
+    const categories = await categoryModel.find();
     if (enteredOtp == otp) {
-      const categories = await categoryModel.find();
+      
+      console.log("caterasdfkn:",categories);
       const user = new userModel({
         name: gname,
         email: gemail,
@@ -177,7 +178,7 @@ const verifyotp = async (req, res) => {
     }
   } catch (error) {
     console.log("Error in verifyotp:", error);
-  res.status(404).render('users/error', { message: 'User not found' });
+  res.status(404).render('error', { message: 'User not found' });
   }
 };
 
@@ -519,7 +520,5 @@ export default {
   updateUserDetails,
   updatePassword,
   loadUpadatepasword,
-
-
 };
 

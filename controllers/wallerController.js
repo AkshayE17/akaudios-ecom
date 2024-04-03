@@ -78,6 +78,7 @@ const razorpay = new Razorpay({
   key_secret: process.env.key_secret
 });
 
+console.log(process.env.key_id)
 
 const addMoney = async (req, res) => {
   try {

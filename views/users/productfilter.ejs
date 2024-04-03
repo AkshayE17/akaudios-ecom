@@ -1,12 +1,8 @@
 <%- include('../userlayout/header.ejs') %>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
-
-<!--start page content-->
 <div class="page-content">
 
-
-   <!--start breadcrumb-->
    <div class="py-4 border-bottom">
     <div class="container-fluid">
       <nav aria-label="breadcrumb">
@@ -18,7 +14,7 @@
       </nav>
     </div>
    </div>
-   <!--end breadcrumb-->
+
    <!--start product grid-->
    <section class="py-4">
     <h5 class="mb-0 fw-bold d-none">Product Grid</h5>
@@ -104,13 +100,13 @@
                           </a>
                         </div>
                         <div class="card-body border-top">
-                          <!-- Product details -->
+                          <!-- Product details -->  
                           <h5 class="mb-0 fw-bold product-short-title"><%= product.productName %></h5>
                           <div class="product-price d-flex align-items-center gap-2 mt-2">
                             <!-- Product price -->
-                            <div class="h6 fw-bold">₹<%= product.price %></div>
-                            <div class="h6 fw-light text-muted text-decoration-line-through">₹<%= product.oldPrice %></div>
-                            <div class="h6 fw-bold text-danger">(<%= product.discount %> off)</div>
+                            <div class="h6 fw-bold">₹<%= product.offerPrice %></div>
+                            <div class="h6 fw-light text-muted text-decoration-line-through">₹<%= product.price %></div>
+                            <div class="h6 fw-bold text-danger">(<%= product.offerPercentage %> off)</div>
                           </div>
                         </div>
                       </div>
@@ -163,9 +159,9 @@
               <h5 class="mb-0 fw-bold product-short-title">${product.productName}</h5>
               <div class="product-price d-flex align-items-center gap-2 mt-2">
                 <!-- Product price -->
-                <div class="h6 fw-bold">$${product.price}</div>
-                <div class="h6 fw-light text-muted text-decoration-line-through">₹${product.oldPrice}</div>
-              
+                <div class="h6 fw-bold">₹${product.offerPrice}</div>
+                <div class="h6 fw-light text-muted text-decoration-line-through">₹${product.price}</div>
+                <div class="h6 fw-bold text-danger"> ${product.offerPercentage} off)</div>
               </div>
             </div>
           </div>
