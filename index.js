@@ -75,4 +75,4 @@ async function connectToMongoDB() {
 
 connectToMongoDB(); 
 
-app.listen(port, () => console.log(`Listening to the server on http://localhost:${port}/admin`));
+app.listen(port, () => console.log(`Listening to the server on http://localhost:${port}`));
