@@ -45,7 +45,7 @@
               <div class="row g-3">
                 <div class="col position-relative">
                     <div id="mainImageContainer" class="image" data-fancybox="gallery" data-src="<%= products.productImg[0] %>">
-                        <img id="mainImage" src="/Product/<%= products.productImg[0] %>" alt="">
+                        <img id="mainImage" src="/product/<%= products.productImg[0] %>" alt="">
                     </div>
                 </div>
             </div><!--end row-->
@@ -54,7 +54,7 @@
                 <% for (var i = 1; i < products.productImg.length; i++) { %>
                 <div class="col-sm-3">
                     <div class="img-thumb-container overflow-hidden position-relative" data-fancybox="gallery" data-src="<%= products.productImg[i] %>">
-                        <img class="img-thumbnail" src="/Product/<%= products.productImg[i] %>" alt="">
+                        <img class="img-thumbnail" src="/product/<%= products.productImg[i] %>" alt="">
                     </div>
                 </div>
                 <% } %>
