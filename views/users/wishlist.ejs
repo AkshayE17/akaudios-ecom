@@ -35,7 +35,7 @@
               <div class="card rounded-0">
                 <div class="btn-close wishlist-close position-absolute end-0 top-0" data-item-id="<%= item._id %>"></div>
                   <% if (item.productImg.length > 0) { %>
-                    <img src="/Product/<%= item.productImg[0] %>" alt="<%= item.productName %>" class="card-img-top rounded-0 product-img">
+                    <img src="/product/<%= item.productImg[0] %>" alt="<%= item.productName %>" class="card-img-top rounded-0 product-img">
 
                   <% } else { %>
                     <!-- Provide a placeholder image or handle the case where productImg is empty -->

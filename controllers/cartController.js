@@ -490,14 +490,19 @@ const removeFromWishlist = async (req, res) => {
     if (indexToRemove !== -1) {
       userWishlist.products.splice(indexToRemove, 1);
       await userWishlist.save();
+      // Send a success response
+      return res.status(200).json({ message: "Item removed from wishlist" });
     }
 
-    res.redirect("/cart/wishlist");
+    // If the item was not found in the wishlist
+    return res.status(404).json({ message: "Item not found in wishlist" });
   } catch (error) {
     console.error("Error removing from wishlist:", error);
-    res.status(500).send("Internal Server Error");
+    // Send an error response
+    return res.status(500).json({ message: "Failed to remove item from wishlist" });
   }
 };
+
 
 export default {
   loadCart,
@@ -511,3 +516,4 @@ export default {
   addToWishlist,
   removeFromWishlist,
 };
+        
