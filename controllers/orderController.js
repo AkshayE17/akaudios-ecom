@@ -8,7 +8,7 @@ import walletModel from "../models/walletModel.js";
 import mongoose from "mongoose";
 import Razorpay from "razorpay";
 import dotenv from "dotenv";
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core";
 import ejs from "ejs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -221,7 +221,7 @@ const downloadinvoice = async (req, res) => {
       { order: [order], categories, req, product }
     );
 
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({headless:'new',executablePath:'/snap/bin/chromium'});
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: "networkidle0" });
     const pdf = await page.pdf({ format: "A4", timeout: 0 });
