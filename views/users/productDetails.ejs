@@ -3,7 +3,7 @@
 <style>
   .image {
       position: relative;
-      padding-bottom: 66.67%; /* 2:3 aspect ratio (400px / 600px) */
+      padding-bottom: 66.67%; 
       overflow: hidden;
       border: 2px solid #ff0000;
       box-shadow: -1px 5px 15px #000;
@@ -22,15 +22,12 @@
   .image:hover {
       --zoom: 3;
   }
-  /* Add other styles as needed */
-
-  /* Media query for mobile screens */
   @media (max-width: 768px) {
       .row.g-3 {
-          flex-wrap: nowrap; /* Keep images in a row */
+          flex-wrap: nowrap;
       }
       .col-sm-3 {
-          flex: 1; /* Distribute columns evenly */
+          flex: 1; 
       }
   }
 </style>

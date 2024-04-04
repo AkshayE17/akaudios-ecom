@@ -95,7 +95,6 @@
   <% } %>
 </div>
 
-
       </div>
    </div>
  </section>
@@ -103,6 +102,7 @@
 
 <%- include('../userlayout/footer.ejs') %>
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
 <script>
   document.querySelectorAll('.cancel-btn, .return-btn').forEach((button) => {
     button.addEventListener('click', (event) => {
@@ -124,7 +124,16 @@
   });
 
 
-
+  window.addEventListener('DOMContentLoaded', () => {
+    const successMessage = "<%= message %>";
+    if (successMessage) { // Check if a success message exists
+      swal({
+        title: "Success!",
+        text: successMessage,
+        icon: "success",
+      });
+    }
+  });
   
 </script>
 
@@ -190,16 +199,5 @@
     });
   });
 
-  // Handle the successful order cancellation response
-  window.addEventListener('DOMContentLoaded', () => {
-    const successMessage = "<%= message %>";
-    if (successMessage === "Order cancelled successfully") {
-      swal({
-        title: "Success!",
-        text: "Order returned successfully",
-        icon: "success",
-      });
-    }
-  });
-</script>
  
+</script>

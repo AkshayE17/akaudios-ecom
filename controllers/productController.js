@@ -166,9 +166,10 @@ const editProduct = async (req, res) => {
     product.stockCount = req.body.stockCount;
 
     if (req.files && req.files.length > 0) {
-
-      product.productImg = req.files.map(file => file.filename);
-    }
+      const newImages = req.files.map(file => file.filename);
+      product.productImg = product.productImg.concat(newImages);
+  }
+  
 
 
     await product.save();

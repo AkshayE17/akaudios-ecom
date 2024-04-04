@@ -542,7 +542,7 @@ const orderCancel = async (req, res) => {
   try {
     const orderId = req.params.orderId;
     const itemId = req.params.productId;
-
+    const categories = await categoryModel.find();
     let order = await orderModel.findById(orderId);
     if (!order) {
       return res.status(404).send({ message: "Order not found" });
@@ -552,6 +552,11 @@ const orderCancel = async (req, res) => {
     if (!item) {
       return res.status(404).send({ message: "Item not found in order" });
     }
+
+    // Restore stock count for the canceled item
+    await incrementStockCount(item.product_id, item.quantity);
+
+    // Update item status
     item.status = "cancelled";
 
     if (order.payment === 'Razorpay' || order.payment === 'Wallet') {
@@ -571,11 +576,8 @@ const orderCancel = async (req, res) => {
       await userWallet.save();
     }
 
-    // Save the updated order
     await order.save();
-
-    // Send JSON response indicating successful order cancellation
-    res.status(200).json({ message: "Order cancelled successfully" });
+    res.redirect('/order/viewOrder?successMessage=Order%20cancelled%20successfully')
   } catch (error) {
     console.log("error:", error);
     res.status(500).send({ message: "Error cancelling order" });
@@ -586,7 +588,7 @@ const orderReturn = async (req, res) => {
   try {
     const orderId = req.params.orderId;
     const itemId = req.params.productId;
-
+    const categories = await categoryModel.find();
     console.log("WELCOME TO ORDER RETURN");
 
     let order = await orderModel.findById(orderId);
@@ -599,7 +601,12 @@ const orderReturn = async (req, res) => {
       return res.status(404).send({ message: "Item not found in order" });
     }
 
-    // Check if payment method is Cash on Delivery (COD)
+    // Restore stock count for the returned item
+    await incrementStockCount(item.product_id, item.quantity);
+
+    // Update item status
+    item.status = "returned";
+
     if (order.payment === 'COD') {
       // Find user's wallet
       const userWallet = await walletModel.findOne({ userId: order.userId });
@@ -619,13 +626,29 @@ const orderReturn = async (req, res) => {
     item.status = "returned";
 
     await order.save();
-    res.status(200).send({ message: "Order returned successfully" });
+    res.redirect('/order/viewOrder?successMessage=Order%20returned%20successfully');
+
   } catch (error) {
     console.error("Error returning order:", error);
     res.status(500).send({ message: "Error returning order" });
   }
 };
 
+
+const incrementStockCount = async (productId, quantity) => {
+  try {
+    const product = await productModel.findById(productId);
+    if (!product) {
+      console.error(`Product with ID ${productId} not found`);
+      return;
+    }
+
+    product.stockCount += quantity;
+    await product.save();
+  } catch (error) {
+    console.error("Error incrementing stock count:", error);
+  }
+};
 
 
 export default {

@@ -72,56 +72,25 @@
           
           
           <li class="nav-item">
-            <a class="nav-link" href="/productfilter">Products</a>
+            <a class="nav-link" href="/productfilter">Shop</a>
           </li>
               
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="javascript:;" data-bs-toggle="dropdown">
-                Shop
-              </a>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="/cart/loadcart">Shop Cart</a></li>
-                <li><a class="dropdown-item" href="/wishlist">Wishlist</a></li>
-                <!-- <li><a class="dropdown-item" href="product-details.html">Product Details</a></li>
-                <li><a class="dropdown-item" href="payment-method.html">Payment Method</a></li>
-                <li><a class="dropdown-item" href="billing-details.html">Billing Details</a></li>
-                <li><a class="dropdown-item" href="address.html">Addresses</a></li>
-                <li><a class="dropdown-item" href="shop-grid.html">Shop Grid</a></li>
-                <li><a class="dropdown-item" href="shop-grid-type-4.html">Shop Grid 4</a></li>
-                <li><a class="dropdown-item" href="shop-grid-type-5.html">Shop Grid 5</a></li>
-                <li><a class="dropdown-item" href="search.html">Search</a></li> -->
-              </ul>
+          <% if (req.session.userId) { %> 
+            <li class="nav-item">
+              <a class="nav-link" href="/logout">Logout</a> 
             </li>
-
-           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="javascript:;" data-bs-toggle="dropdown">
-              Account
-            </a>
-            <ul class="dropdown-menu">
-              <% if (req.session.userId) { %>
-                <li><a class="dropdown-item" href="/logout">Logout</a></li>
-                <!-- Add other authenticated user links if needed -->
-              <% } else { %>
-                <li><a class="dropdown-item" href="/login">Login</a></li>
-                <li><a class="dropdown-item" href="/registration">Register</a></li>
-              <% } %>
-            </ul>
-          </li>
+          <% } else { %> 
+            <li class="nav-item">
+              <a class="nav-link" href="/login">Login</a> 
+            </li>
+          <% } %>
+          
           </ul>
         </div>
       </div>
       <% if (req.session.userId) { %>
         <ul class="navbar-nav secondary-menu flex-row">
-          <li class="nav-item">
-            <a class="nav-link dark-mode-icon" href="javascript:;">
-              <div class="mode-icon">
-                <i class="bi bi-moon"></i>
-              </div>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="search.html"><i class="bi bi-search"></i></a>
-          </li>
+    
           <li class="nav-item">
             <a class="nav-link" href="/cart/wishlist"><i class="bi bi-suit-heart"></i></a>
           </li>

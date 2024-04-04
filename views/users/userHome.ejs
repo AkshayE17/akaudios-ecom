@@ -3,48 +3,51 @@
 <!-- Include SweetAlert library -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-  <!--start page content-->
-  <div class="page-content">
+<!--start page content-->
+<div class="page-content">
 
-    <section class="slider-section">
-      <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
-         <div class="carousel-indicators">
-           <% banners.forEach((banner, index) => { %>
-             <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="<%= index %>" class="<%= index === 0 ? 'active' : '' %>" aria-current="<%= index === 0 ? 'true' : 'false' %>"></button>
-           <% }); %>
-         </div>
-         <div class="carousel-inner">
-           <% banners.forEach((banner, index) => { %>
-            <div class="carousel-item <%= index === 0 ? 'active' : '' %>" style="background-color: <%= banner.color %>;">
-              <div class="row d-flex align-items-center">
-                  <div class="col d-none d-lg-flex justify-content-center">
-                    <div class="">
-                      <h3 class="h3 fw-light text-white fw-bold"><%= banner.title %></h3>
-                      <h1 class="h1 text-white fw-bold"><%= banner.subtitle %></h1>
-                      <p class="text-white fw-bold"><i>Last call for upto 25%</i></p> <!-- Adjust this as needed -->
-                      <div class=""><a class="btn btn-dark btn-ecomm" href="/productfilter">Shop Now</a></div> <!-- Adjust this as needed -->
-                    </div>
-                  </div>
-                  <div class="col banner-container">
-                    <img src="/banners/<%= banner.image %>" class="img-fluid carousel-image" alt="...">
-                  </div>
-              </div>
-             </div>
-             
-             
-             
-           <% }); %>
-         </div>
-         <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
-           <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-           <span class="visually-hidden">Previous</span>
-         </button>
-         <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
-           <span class="carousel-control-next-icon" aria-hidden="true"></span>
-           <span class="visually-hidden">Next</span>
-         </button>
+  <section class="slider-section">
+    <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
+      <div class="carousel-indicators">
+        <% banners.forEach((banner, index) => { %>
+        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="<%= index %>"
+          class="<%= index === 0 ? 'active' : '' %>" aria-current="<%= index === 0 ? 'true' : 'false' %>"></button>
+        <% }); %>
       </div>
-     </section>
+      <div class="carousel-inner">
+        <% banners.forEach((banner, index) => { %>
+        <div class="carousel-item <%= index === 0 ? 'active' : '' %>" style="background-color: <%= banner.color %>;">
+          <div class="row d-flex align-items-center">
+            <div class="col">
+              <div class="text-center">
+                <h3 class="h3 fw-light text-white fw-bold"><%= banner.title %></h3>
+                <h1 class="h1 text-white fw-bold"><%= banner.subtitle %></h1>
+                <p class="text-white fw-bold"><i>Last call for upto 25%</i></p>
+                <!-- Adjust this as needed -->
+                <div class=""><a class="btn btn-dark btn-ecomm" href="/productfilter">Shop Now</a></div>
+                <!-- Adjust this as needed -->
+              </div>
+            </div>
+            <div class="col banner-container">
+              <img src="/banners/<%= banner.image %>" class="img-fluid carousel-image" alt="...">
+            </div>
+          </div>
+        </div>
+        <% }); %>
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions"
+        data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions"
+        data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+    </div>
+  </section>
+
      
   <section class="section-padding">
     <div class="container">
@@ -179,5 +182,6 @@
      top: 0;
      left: 0;
   }
+
  </style>
- 
+     

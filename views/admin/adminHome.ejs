@@ -52,7 +52,7 @@
                 </article>
             </div>
         </div>
-
+        <!-- Monthly Earning Card -->
         <div class="col-lg-3">
             <div class="card card-body mb-4">
                 <article class="icontext">
@@ -66,7 +66,6 @@
             </div>
         </div>
     </div>
-
 
     <div class="row">
         <div class="col-xl-12">
@@ -91,14 +90,11 @@
             </div>
         </div>
     </div>
-</section>
 
-<section class="content-main">
     <div class="content-header">
         <h2 class="content-title card-title">TOP 5 CATEGORIES</h2>
     </div>
     <div class="row">
-
         <% categories.forEach(category => { %>
             <div class="col-lg-3">
                 <div class="card card-body mb-4">
@@ -112,9 +108,7 @@
             </div>
         <% }); %>
     </div>
-</section>
 
-<section class="content-main">
     <div class="content-header">
         <h2 class="content-title card-title">Top 5 Products Ordered</h2>
     </div>
@@ -122,35 +116,33 @@
         <div class="col-lg-6">
             <table class="table">
                 <thead>
-                  <tr>
-                    <th scope="col">Product Name</th>
-                    <th scope="col">Total Ordered</th>
-                  </tr>
+                    <tr>
+                        <th scope="col">Product Name</th>
+                        <th scope="col">Total Ordered</th>
+                    </tr>
                 </thead>
                 <tbody>
-                  <% topProducts.forEach(product => { %>
-                    <tr>
-                      <td><%= product.productName %></td>
-                      <td><%= product.totalOrdered %></td>
-                    </tr>
-                  <% }); %>
+                    <% topProducts.forEach(product => { %>
+                        <tr>
+                            <td><%= product.productName %></td>
+                            <td><%= product.totalOrdered %></td>
+                        </tr>
+                    <% }); %>
                 </tbody>
-              </table>
+            </table>
         </div>
     </div>
 </section>
 
-
-  
 <%- include('../adminlayout/footer.ejs') %>
 
 <script>
 $(document).ready(function() {
     var myChart = new Chart(document.getElementById('myChart').getContext('2d'), {
-    type: 'bar',
-    data: {},
-    options: {}
-});
+        type: 'bar',
+        data: {},
+        options: {}
+    });
 
     var dailyRevenue = JSON.parse('<%- dailyRevenue %>');
     var monthlyRevenue = JSON.parse('<%- monthlyRevenue %>');
@@ -180,7 +172,6 @@ $(document).ready(function() {
     function renderChart(data) {
         var ctx = document.getElementById('myChart').getContext('2d');
 
-
         var labels = Object.keys(data); 
         var revenueValues = Object.values(data);
 
@@ -209,8 +200,7 @@ $(document).ready(function() {
             }
         });
     }
-
+  
     $("#revenueOption").val('daily').trigger('change');
 });
-
 </script>
