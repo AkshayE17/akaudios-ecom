@@ -39,7 +39,7 @@
                         <div class="d-flex flex-column flex-lg-row gap-3">
                             <div class="product-img">
                                 <!-- Display product image -->
-                                <img src="/Product/<%= product.productDetails.productImg[0] %>" width="150" alt="">
+                                <img src="/product/<%= product.productDetails.productImg[0] %>" width="150" alt="">
                             </div>
                             <div class="product-info flex-grow-1">
                                 <!-- Display product name -->
@@ -290,14 +290,14 @@ $(document).ready(function() {
                 } else {
                     // Display the detailed error message
                     $('#couponStatus').text(response.error);
-                    $('#couponStatus').show(); // Make sure the error message is visible
+                    $('#couponStatus').show(); 
                 }
             },
             error: function(xhr, status, error) {
                 console.error('Error removing coupon:', error);
                 // Display a generic error message
                 $('#couponStatus').text('Failed to remove coupon.');
-                $('#couponStatus').show(); // Make sure the error message is visible
+                $('#couponStatus').show(); 
             }
         });
     });

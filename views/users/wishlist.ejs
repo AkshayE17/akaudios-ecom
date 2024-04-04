@@ -45,10 +45,10 @@
                 <div class="card-body border-top text-center">
                   <p class="mb-0 product-short-name"><%= item.productName %></p>
                   <div class="product-price d-flex align-items-center gap-2 mt-2 justify-content-center">
-                    <div class="h6 fw-bold">$<%= item.offerPrice %></div>
+                    <div class="h6 fw-bold">$<%= Math.round(item.offerPrice) %></div>
                     <% if (item.offerPrice && item.offerPercentage) { %>
-                      <div class="h6 fw-light text-muted text-decoration-line-through">$<%= item.price %></div>
-                      <div class="h6 fw-bold text-danger">(<%= item.offerPercentage %>% off)</div>
+                      <div class="h6 fw-light text-muted text-decoration-line-through">$<%= Math.round(item.price) %></div>
+                      <div class="h6 fw-bold text-danger">(<%= Math.round(item.offerPercentage) %>% off)</div>
                     <% } %>
                   </div>
                 </div>

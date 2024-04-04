@@ -516,4 +516,4 @@ export default {
   addToWishlist,
   removeFromWishlist,
 };
-        
+ 
