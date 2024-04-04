@@ -29,7 +29,7 @@ const adminRegistration = async (req,res) => {
     }
 
   }catch(error){
-    console.log("error");
+    res.status(500).render('adminerror', { message: 'Internal Server Error', success: false, msg: '', product: {} });
   }
 
 }
@@ -134,7 +134,7 @@ const homeLoad = async (req, res) => {
 
   } catch (error) {
     console.error("Error from homeLoad", error);
-    res.status(500).send('Internal Server Error');
+    res.status(500).render('adminerror', { message: 'Internal Server Error', success: false, msg: '', product: {} });
   }
 };
 
@@ -215,7 +215,7 @@ const loadAdminlogin = async (req, res) => {
   try {
     res.render('adminLogin');
   } catch (error) {
-    console.log(error.message)
+    res.status(500).render('adminerror', { message: 'Internal Server Error', success: false, msg: '', product: {} });
   }
 }
 
@@ -251,7 +251,7 @@ const verifyLogin = async (req, res) => {
     }
   } catch (error) {
     console.error('Error in verifyLogin:', error.message);
-    res.status(500).send('Internal Server Error');
+    res.status(500).render('adminerror', { message: 'Internal Server Error', success: false, msg: '', product: {} });
   }
 };
 
@@ -263,6 +263,7 @@ const adminDashboard = async(req,res)=>{
        res.render('customers',{users:userData});
   }catch(error){
     console.log(error.message);
+    res.status(500).render('adminerror', { message: 'Internal Server Error', success: false, msg: '', product: {} });
   }
 }
 
@@ -282,7 +283,7 @@ const blockUnblockUser = async (req, res) => {
     res.redirect('/admin/customers');
   } catch (error) {
     console.error(error);
-    res.status(500).send('Internal Server Error');
+    res.status(500).render('adminerror', { message: 'Internal Server Error', success: false, msg: '', product: {} });
   }
 };
 
@@ -297,7 +298,7 @@ const adminLogout = async (req, res) => {
     }
   } catch (error) {
     console.log(error.message);
-    return res.status(500).render('error', { error: 'Internal Server Error' });
+    return res.status(500).render('adminerror', { error: 'Internal Server Error' });
   }
 };
 
@@ -348,7 +349,7 @@ const viewAllOrders = async (req, res) => {
     res.render('allorders', { orders });
   } catch (error) {
     console.error('Error fetching orders:', error);
-    res.status(500).send('Internal Server Error');
+    res.status(500).render('adminerror', { message: 'Internal Server Error', success: false, msg: '', product: {} });
   }
 };
 
@@ -395,9 +396,8 @@ const viewOrderDetails = async (req, res) => {
 
      res.render('adminorderDetails', { categories, req, order, billingAddress, billingAddressMessage, productImages });
   } catch (error) {
-     // Handle errors
      console.error('Error fetching order details:', error);
-     res.status(500).send('Internal Server Error');
+     res.status(500).render('adminerror', { message: 'Internal Server Error', success: false, msg: '', product: {} });
   }
  };
  
@@ -515,7 +515,7 @@ const getSalesReport = async (req, res) => {
     if (req.xhr) {
       res.status(500).json({ error: 'Internal Server Error' });
     } else {
-      res.status(500).render('error', { error: 'Internal server error' });
+      res.status(500).render('adminerror', { error: 'Internal server error' });
     }
   }
 };
@@ -595,7 +595,7 @@ const loadAddCategoryOffer = async (req, res) => {
     res.render('addcategoryoffer', { categories: categories, categoryOffers: categoryOffers, success: '', error: '' });
   } catch (error) {
     console.error('Error loading Add Category Offer page:', error);
-    res.status(500).render('error', { message: 'Internal Server Error', success: false, msg: '', product: {} });
+    return res.status(500).render('adminerror', { message: 'Internal Server Error', success: false, msg: '', product: {} });
   }
 };
 
@@ -630,7 +630,7 @@ const addCategoryOffer = async (req, res) => {
     return res.redirect("/admin/categoryoffer");
   } catch (error) {
     console.error('Error adding category offer:', error);
-    return res.status(500).render('error', { message: 'Internal Server Error', success: false, msg: '', product: {} });
+    return res.status(500).render('adminerror', { message: 'Internal Server Error', success: false, msg: '', product: {} });
   }
 };
 
@@ -642,7 +642,7 @@ const deleteCategoryOffer = async (req, res) => {
     res.redirect('/admin/categoryoffer');
   } catch (error) {
     console.error('Error deleting category offer:', error);
-    // Redirect back to the Add Category page with error message
+
     res.redirect('/admin/categoryoffer');
   }
 };

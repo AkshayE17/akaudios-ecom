@@ -25,7 +25,7 @@ const loadProducts = async (req, res) => {
     res.render('products', { categories, products: productData, success: false, error:''}); 
   } catch (error) {
     console.log(error.message);
-    res.status(500).render('error', { message: 'Internal Server Error', success: false, msg: '', product: {} });
+    return res.status(404).render('adminerror', { message: 'Product not found', success: false, msg: '', product: {} })
   }
 };
 
@@ -123,7 +123,7 @@ const addProduct = async (req, res) => {
     res.render('products', { products: productData, success: 'Product added successfully' }); 
   } catch (error) {
     console.error(error);
-    res.status(500).render('error', { message: 'Internal Server Error', success: false, msg: '', product: {} });
+    return res.status(404).render('adminerror', { message: 'Product not found', success: false, msg: '', product: {} })
   }
 };
 
@@ -144,7 +144,7 @@ const editProductPage = async (req, res) => {
     res.render('editProduct', { product, categories, productImages });
   } catch (error) {
     console.error(error);
-    res.status(500).render('adminerror', { message: 'Internal Server Error', success: false, msg: '', product: {} });
+    return res.status(404).render('adminerror', { message: 'Product not found', success: false, msg: '', product: {} })
   }
 };
 
@@ -177,7 +177,7 @@ const editProduct = async (req, res) => {
     res.render('products', { products: productData, success: 'Product edited successfully' });
   } catch (error) {
     console.error(error);
-    res.status(500).render('error', { message: 'Internal Server Error', success: false, msg: '', product: {} });
+    return res.status(404).render('adminerror', { message: 'Product not found', success: false, msg: '', product: {} })
   }
 };
 
@@ -196,7 +196,7 @@ const deleteProductImage = async (req, res) => {
     return res.render('products',{ products:productData , success: 'Image deleted successfully' });
   } catch (error) {
     console.error(error);
-    res.status(500).render('error', { message: 'Internal Server Error', success: false, msg: '', product: {} });
+    return res.status(404).render('adminerror', { message: 'Product not found', success: false, msg: '', product: {} })
   }
 };
 
@@ -297,7 +297,7 @@ const filterProducts = async (req, res) => {
 
   } catch (error) {
     console.error('Error filtering products:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).render('error', { message: 'Internal Server Error', success: false, msg: '', product: {} });
   }
 };
 

@@ -7,7 +7,7 @@ import bannerModel from "../models/bannerModel.js";
     const banners = await bannerModel.find();
     res.render("admin/banners",{banners});
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).render('adminerror', { message: 'Internal Server Error', success: false, msg: '', product: {} });
   }
 };
 
@@ -24,7 +24,7 @@ import bannerModel from "../models/bannerModel.js";
      res.redirect('/admin/banner'); 
   } catch (error) {
      console.error(error);
-     res.status(500).send('Server Error');
+     return res.status(500).render('adminerror', { message: 'Internal Server Error', success: false, msg: '', product: {} });
   }
  };
 
@@ -38,7 +38,7 @@ import bannerModel from "../models/bannerModel.js";
      res.render('admin/bannerEdit', { banner });
   } catch (error) {
      console.error(error);
-     res.status(500).send('Server Error');
+     return res.status(500).render('adminerror', { message: 'Internal Server Error', success: false, msg: '', product: {} });
   }
  };
 
@@ -66,7 +66,7 @@ import bannerModel from "../models/bannerModel.js";
      res.redirect('/admin/banner');
   } catch (error) {
      console.error(error);
-     res.status(500).send('Server Error');
+     return res.status(500).render('adminerror', { message: 'Internal Server Error', success: false, msg: '', product: {} });
   }
  };
 
@@ -89,7 +89,7 @@ import bannerModel from "../models/bannerModel.js";
      }
   } catch (error) {
      console.error("Error in deleteBanner:", error);
-     res.status(500).json({ message: error.message });
+     return res.status(500).render('adminerror', { message: 'Internal Server Error', success: false, msg: '', product: {} });
   }
  };
  

@@ -241,7 +241,7 @@ const removeAddress = async (req, res) => {
     res.redirect('/address/loadSavedaddress');
   } catch (error) {
     console.log('error from removeAddress', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).render('error', { error: 'Internal Server Error' });
   }
 }
 
