@@ -111,13 +111,23 @@
       }
     });
 
-    // Display error message if present
+    // Display success or error message based on the presence of a message
     var message = '<%= message %>';
     if (message) {
-      Swal.fire({
-        icon: 'error',
-        title: 'INVALID',
-        text: message,
-      });
+      // Check if the message indicates a successful password change
+      if (message.includes('Password changed successfully')) {
+        Swal.fire({
+          icon: 'success', // Change the icon to success
+          title: 'Success',
+          text: message,
+        });
+      } else {
+        // For other messages, display as error
+        Swal.fire({
+          icon: 'error',
+          title: 'INVALID',
+          text: message,
+        });
+      }
     }
-  </script>
+</script>

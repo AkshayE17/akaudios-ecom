@@ -9,12 +9,12 @@ import bcrypt from 'bcrypt';
 import nodemailer from 'nodemailer';
 import Mailgen from 'mailgen';
 import Swal from 'sweetalert2';
+import { v4 as uuidv4 } from 'uuid';
 
 
 const securePassword = async (password) => {
   try {
     const passwordHash = await bcrypt.hash(password, 10);
-
     return passwordHash;
   } catch (error) {
     throw error;
@@ -28,13 +28,20 @@ const homeLoad = async (req, res) => {
     const products = await productModel.find();
     const productOffers = await productOfferModel.find();
     const categoryOffers = await categoryOfferModel.find();
-    const banners= await bannerModel.find();
+    const banners = await bannerModel.find();
 
     const isLoggedIn = req.session.isLoggedIn;
+    const justLoggedInFromLoginPage = req.session.justLoggedInFromLoginPage || false; // Use this flag
+    req.session.justLoggedInFromLoginPage = false; // Reset it
 
-    const justLoggedIn = req.session.justLoggedIn;
-    delete req.session.justLoggedIn; 
-    
+    const userId = req.session.userId;
+    let userName = '';
+
+    if (userId) {
+      const userData = await userModel.findById(userId);
+      userName = userData ? userData.name : '';
+    }
+
     const productsWithOffer = products.map(product => {
       const productOffer = productOffers.find(offer => offer.product.toString() === product._id.toString());
       const categoryOffer = categoryOffers.find(offer => offer.category.toString() === product.category.toString());
@@ -51,113 +58,108 @@ const homeLoad = async (req, res) => {
       };
     });
 
-    res.render("userHome", { req, categories, products: productsWithOffer, isLoggedIn, justLoggedIn ,banners}); // Pass justLoggedIn to the EJS template
+    res.render("userHome", { req, categories, products: productsWithOffer, isLoggedIn, justLoggedInFromLoginPage, userName, banners });
   } catch (error) {
     console.log("Error from homeLoad", error);
     res.status(500).render('error', { error: 'Internal Server Error' });
   }
 };
 
-//Loading register
+ 
 const loadRegister = async (req, res) => {
   try {
-    const categories = await categoryModel.find(); // Fetch categories from the database
-    res.render('userRegistration', {req, categories });
+     const categories = await categoryModel.find(); 
+     res.render('userRegistration', { req, categories, emailExists: false });
   } catch (error) {
-    console.log(error.message);
+     console.log(error.message);
+     res.render('error');
   }
-};
+ };
 
-let gname, gpassword, gemail, gmobile;
-var otp;
+ let gname, gpassword, gemail, gmobile;
+ var otp;
+ 
+ const otpgenerator = () => {
+   otp = Math.floor(100000 + Math.random() * 900000); // Ensures a 6-digit number
+   console.log(otp);
+ };
+ 
+ function sendOtp(email, OTP) {
+   let config = {
+     service: "gmail",
+     auth: {
+       user: "akshaykumar2002817@gmail.com",
+       pass: "cpdf hmcp sdsm odtn",
+     },
+   };
+ 
+   const transport = nodemailer.createTransport(config);
+ 
+   let mailGenerator = new Mailgen({
+     theme: "default",
+     product: {
+       name: "Mailgen",
+       link: "http://mailgen.js/",
+     },
+   });
+ 
+   let response = {
+     body: {
+       name: `${email}`,
+       intro: `Your OTP is ${otp}`,
+       outro: "Looking forward",
+     },
+   };
+ 
+   let mail = mailGenerator.generate(response);
+ 
+   let message = {
+     from: "akshaykumar2002817@gmail.com",
+     to: email, // Define the recipient's email address here
+     subject: "Otp sent successfully",
+     html: mail,
+   };
+ 
+   transport.sendMail(message);
+ }
 
 
-
-const otpgenerator = () => {
-  otp = Math.random();
-  otp = otp * 1000000;
-  otp = parseInt(otp);
-  console.log(otp);
-};
-
-function sendOtp(email, OTP) {
-  let config = {
-    service: "gmail",
-    auth: {
-      user: "akshaykumar2002817@gmail.com",
-      pass: "cpdf hmcp sdsm odtn",
-    },
-  };
-
-  const transport = nodemailer.createTransport(config);
-
-  let mailGenerator = new Mailgen({
-    theme: "default",
-    product: {
-      name: "Mailgen",
-      link: "http://mailgen.js/",
-    },
-  });
-
-  let response = {
-    body: {
-      name: `${email}`,
-      intro: `Your OTP is ${otp}`,
-      outro: "Looking forward",
-    },
-  };
-
-  let mail = mailGenerator.generate(response);
-
-  let message = {
-    from: "akshaykumar2002817@gmail.com",
-    to: email,
-    subject: "Otp sent successfully",
-    html: mail,
-  };
-  transport.sendMail(message);
-}
-
-//signup
 const signup = async (req, res) => {
   try {
-    const categories = await categoryModel.find();
-    gname = req.body.name;
-    gemail = req.body.email;
-    gpassword = await securePassword(req.body.password);
-    gmobile = req.body.mobile;
-
-    const existuser = await userModel.findOne({ email: gemail });
-    if (existuser) {
-      return res.render("userRegistration", { categories, req, message: "Email already exists" });
-    }
-    
-
-    otpgenerator();
-    sendOtp(gemail, otp);
-
-    res.render("otp", { req, categories, email: gemail, message: "Enter the otp" });
-
+     const categories = await categoryModel.find();
+     gname = req.body.name;
+     gemail = req.body.email;
+     gpassword = await securePassword(req.body.password);
+     gmobile = req.body.mobile;
+ 
+     const existuser = await userModel.findOne({ email: gemail });
+     if (existuser) {
+       // Send a flag indicating the email already exists
+       return res.render("userRegistration", { categories, req, emailExists: true });
+     }
+     
+     otpgenerator();
+     sendOtp(gemail, otp);
+ 
+     res.render("otp", { req, categories, email: gemail, message: "Enter the otp" });
+ 
   } catch (error) {
-    console.log("Error in signup:", error);
+     console.log("Error in signup:", error);
   }
-};
+ };
 
 
-const verifyotp = async (req, res) => {
+ const verifyotp = async (req, res) => {
   try {
     const enteredOtp = req.body.otp;
     const categories = await categoryModel.find();
     if (enteredOtp == otp) {
-      
-      console.log("caterasdfkn:",categories);
       const user = new userModel({
         name: gname,
         email: gemail,
         password: gpassword,
         mobile: gmobile,
       });
-      console.log(user);
       const userData = await user.save();
       await userModel.updateOne({ _id: userData._id }, { $set: { is_Online: true } });
 
@@ -173,6 +175,9 @@ const verifyotp = async (req, res) => {
       } else {
         res.render("userRegistration", {req,categories, message: "Registration failed" });
       }
+
+      // Pass the otp value as a parameter to the sendOtp function
+      sendOtp(gemail, otp);
     } else {
       res.render("otp", { req,categories,email: gemail, message: "Incorrect OTP. Please try again." });
     }
@@ -207,41 +212,30 @@ const verifyLogin = async (req, res) => {
 
       const passwordMatch = await bcrypt.compare(password, userData.password);
       if (passwordMatch) {
-        req.session.userId = userData._id; // Set user ID in the session
-        req.session.isLoggedIn = true; // Set isLoggedIn flag in the session
+        req.session.userId = userData._id;
+        req.session.isLoggedIn = true;
+        req.session.justLoggedInFromLoginPage = true; // Set this variable to true when coming from the login page
+        req.session.userName = userData.name;
         await userModel.findByIdAndUpdate(
           { _id: userData._id },
           { $set: { is_Online: true } }
         );
 
-        // Display SweetAlert message
-        const Toast = Swal.mixin({
-          toast: true,
-          position: "top-end",
-          showConfirmButton: false,
-          timer: 3000,
-          timerProgressBar: true,
-          didOpen: (toast) => {
-            toast.onmouseenter = Swal.stopTimer;
-            toast.onmouseleave = Swal.resumeTimer;
-          }
-        });
-        Toast.fire({
-          icon: "success",
-          title: "Signed in successfully"
-        });
-
+        // Redirect to the home page
         res.redirect("/");
       } else {
         res.render("userLogin", { req, categories, message: "Password is incorrect" });
       }
     } else {
-      res.render("userLogin", { req, categories, message: "User not found . Please sign up" });
+      res.render("userLogin", { req, categories, message: "User not found. Please sign up." });
     }
   } catch (error) {
     console.log(error.message);
   }
 };
+
+
+ 
 
 
 const userdashLoad = async (req, res) => {
@@ -292,7 +286,7 @@ const editUserDetailsLoad = async (req, res) => {
     // Fetch the current user's details from the database
     const user = await userModel.findById(req.session.userId);
 
-    if (user) {
+    if (user) { 
       // Render the edit user details page with the user's current details
       res.render("userdetailsEdit", { user,categories,req });
     } else {
@@ -414,7 +408,6 @@ const userLogout = async (req, res) => {
 
 const forgotPasswordLoad =async (req, res) => {
   try{
-
     const categories = await categoryModel.find();
     res.render('forgot-password', { categories,req,email: req.body.email, message: "verify email"});
   }
@@ -479,24 +472,16 @@ const changePassword = async (req, res) => {
     if (newPassword !== confirmPassword) {
       return res.render('newpassword', { categories,req,email, message: 'New password and confirm password do not match. Please try again.' });
     }
-
     const hashedPassword = await securePassword(newPassword);
-
     console.log('Hashed Password:', hashedPassword);
-
     const result = await userModel.updateOne({ email }, { $set: { password: hashedPassword } });
-
     console.log('Result from password update:', result);
-
     if (result.modifiedCount == 1) {
-
       return res.render('userLogin', { categories,req,message: 'Password changed successfully. Please log in with your new password.' });
     } else {
-
       return res.render('newpassword', { categories,req,email, message: 'Failed to change password. Please try again.' });
     }
   } catch (error) {
-
     console.error('Error in changePassword:', error);
     res.status(500).render('error', { message: 'Internal Server Error' });
   }
@@ -520,5 +505,5 @@ export default {
   updateUserDetails,
   updatePassword,
   loadUpadatepasword,
+  // resendForgotPasswordOtp
 };
-

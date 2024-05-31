@@ -1,5 +1,6 @@
 <%- include('../userlayout/header.ejs') %>
-<!--start page content-->
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
 <div class="page-content">
 
    <!--start breadcrumb-->
@@ -79,12 +80,7 @@
 
 
  </div>
-  
-
-
-  
-
-
+ <input type="hidden" id="emailExists" value="<%= emailExists ? 'true' : 'false' %>">
   <%- include('../userlayout/footer.ejs') %>
 
   <script>
@@ -159,5 +155,14 @@ if (!email) {
     event.preventDefault();
   }
 });
+
+
+document.addEventListener("DOMContentLoaded", function() {
+ const emailExists = document.getElementById("emailExists").value === 'true';
+ if (emailExists) {
+    swal("Oops!", "Email already exists.", "error");
+ }
+});
+
 
     </script>

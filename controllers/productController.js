@@ -32,38 +32,42 @@ const loadProducts = async (req, res) => {
 
 const productDetails = async (req, res) => {
   try {
-    const productId = req.params.id; 
-    const productData = await productModel.findById(productId);
-    if (!productData) {
+    const productId = req.params.id;
+    let productData;
 
-      return res.render('error', { message: 'Product not found', success: false, msg: '', product: {} });
+    try {
+      productData = await productModel.findById(productId);
+    } catch (error) {
+      if (error.name === 'CastError') {
+        return res.status(404).render('error', { message: 'Product not found', success: false, msg: '', product: {} });
+      }
+      throw error;
+    }
+
+    if (!productData) {
+      return res.status(404).render('error', { message: 'Product not found', success: false, msg: '', product: {} });
     }
 
     const categories = await categoryModel.find();
 
-
-    const productOffer = await productOfferModel.findOne({ product: productId });
+    const productOffer = await productOfferModel.findOne({ product: productData._id });
     const categoryOffer = await categoryOfferModel.findOne({ category: productData.category });
     const offerPercentage = Math.max(productOffer ? productOffer.productOffer : 0, categoryOffer ? categoryOffer.categoryOffer : 0);
 
-
     const offerPrice = Math.floor(productData.price * (1 - offerPercentage / 100));
-
-
 
     const productWithOffer = {
       ...productData.toObject(),
       offerPrice,
       offerPercentage
     };
-    
+
     res.render('productDetails', { products: productWithOffer, categories, req });
   } catch (error) {
     console.error(error);
     res.status(500).render('error', { message: 'Internal Server Error', success: false, msg: '', product: {} });
   }
 };
-
 
 
 const loadAddproduct = async (req, res) => {

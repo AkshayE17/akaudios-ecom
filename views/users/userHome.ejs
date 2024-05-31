@@ -1,11 +1,5 @@
 <%- include('../userlayout/header.ejs') %>
-
-<!-- Include SweetAlert library -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<!--start page content-->
 <div class="page-content">
-
   <section class="slider-section">
     <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
       <div class="carousel-indicators">
@@ -23,9 +17,7 @@
                 <h3 class="h3 fw-light text-white fw-bold"><%= banner.title %></h3>
                 <h1 class="h1 text-white fw-bold"><%= banner.subtitle %></h1>
                 <p class="text-white fw-bold"><i>Last call for upto 25%</i></p>
-                <!-- Adjust this as needed -->
                 <div class=""><a class="btn btn-dark btn-ecomm" href="/productfilter">Shop Now</a></div>
-                <!-- Adjust this as needed -->
               </div>
             </div>
             <div class="col banner-container">
@@ -48,7 +40,6 @@
     </div>
   </section>
 
-     
   <section class="section-padding">
     <div class="container">
       <div class="text-center pb-3">
@@ -83,14 +74,8 @@
       </div>
     </div>
     <div id="isLoggedIn" data-isLoggedIn="<%= isLoggedIn %>"></div>
-
   </section>
   
-
- 
-
-
-    <!--start cartegory slider-->
     <section class="cartegory-slider section-padding bg-section-2">
       <div class="container">
         <div class="text-center pb-3">
@@ -116,72 +101,62 @@
         </div>
       </div>
     </section>
-    
-    
-    <!--end cartegory slider-->
 
-  <!--Start Back To Top Button-->
   <a href="javaScript:;" class="back-to-top"><i class="bi bi-arrow-up"></i></a>
-  <!--End Back To Top Button-->
-
   <div id="isLoggedIn" data-isLoggedIn="<%= isLoggedIn %>"></div>
 
-  <!-- In your EJS template file -->
   <script src="/js/bootstrap.bundle.min.js"></script>
   <script src="/js/jquery.min.js"></script>
   <script src="/plugins/slick/slick.min.js"></script>
   <script src="/js/main.js"></script>
   <script src="/js/index.js"></script>
   <script src="/js/loader.js"></script>
-  
-  <!-- Display SweetAlert based on isLoggedIn data attribute -->
   </div>
 
-  
   <%- include('../userlayout/footer.ejs') %>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-  
-  // JavaScript code in userHome.ejs
   <script>
-    $(document).ready(function() {
-      var isLoggedIn = $('#isLoggedIn').data('isLoggedIn');
+    const justLoggedInFromLoginPage = '<%= justLoggedInFromLoginPage %>';
+    const userName = '<%= userName %>';
   
-      if (isLoggedIn) {
-        const Toast = Swal.mixin({
-          toast: true,
-          position: "top-end",
-          showConfirmButton: false,
-          timer: 3000,
-          timerProgressBar: true,
-          didOpen: (toast) => {
-            toast.onmouseenter = Swal.stopTimer;
-            toast.onmouseleave = Swal.resumeTimer;
-          }
-        });
-        
-        // Display the success message
-        Toast.fire({
-          icon: "success",
-          title: "Signed in successfully"
-        });
-      }
-    });
+    if (justLoggedInFromLoginPage === 'true' && userName !== '') {
+      Swal.fire({
+        icon: 'success',
+        title: `Welcome, ${userName}!`,
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        customClass: {
+          title: 'custom-toast-title'
+        }
+      });
+    }
   </script>
+  
+  
+  
+  
 <style>
   .banner-container {
      width: 100%; 
      height: 700px; 
      position: relative;
   }
- 
+
   .carousel-image {
-     width: 100%; /* Image will take the full width of the banner container */
-     height: 100%; /* Image will take the full height of the banner container */
-     object-fit: cover; /* Ensures the image covers the area without distorting its aspect ratio */
-     position: absolute; /* Position the image absolutely within the banner container */
+     width: 100%; 
+     height: 100%; 
+     object-fit: cover; 
+     position: absolute; 
      top: 0;
      left: 0;
   }
-
+  .swal2-title.custom-toast-title {
+    font-size: 1.5em;
+    font-weight: bold;
+  }
  </style>
      

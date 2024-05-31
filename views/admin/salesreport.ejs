@@ -2,14 +2,12 @@
 
 
 <div id="salesReport">
-
     <section class="content-main">
         <div class="content-header">
             <div>    
               <h2 class="content-title card-title">Sales report</h2>
               <p>Whole data about your business here</p>
             </div>
-
           
           <div class="btn-group">
             <button type="button" class="btn btn-primary" id="printReport">Generate PDF</button>
@@ -137,7 +135,7 @@
                                     <td><a href="#" class="fw-bold">#<%= order._id %></a></td>
                                     <td><%= order.userId.name %></td>
                                     <td><%= formatDate(order.createdAt) %></td>
-                                    <td>₹<%= order.totalAmount.toFixed(2) %></td>
+                                    <td>₹<%= order.totalAmount %></td>
                                   
                                     <td><i class="material-icons md-payment font-xxl text-muted mr-5"></i> <%= order.payment%></td>
                                 
@@ -146,13 +144,12 @@
                         </tbody>
                     </table>
                 </div>
-                <!-- table-responsive end// -->
+
             </div>
             </div>
             </section>
 
           </div>
-            <!-- content-main end// -->
             <footer class="main-footer font-xs">
                 <div class="row pb-30 pt-15">
                     <div class="col-sm-6">
@@ -245,7 +242,6 @@ $(document).ready(function() {
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
 
-  // Save the file
   XLSX.writeFile(wb, 'daily_report.xlsx');
 }
 

@@ -1,3 +1,4 @@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
 <%- include('../userlayout/header.ejs') %>
   <div class="page-content">
@@ -9,39 +10,60 @@
               <div class="card-body p-4">
                 <h4 class="mb-0 fw-bold text-center">OTP Verification</h4>
                 <hr>
+            <!-- Display email and message -->
+            <p>Email: <%= email %></p>
+            <p><%= message %></p>
   
-                <!-- Display email and message -->
-                <p>Email: <%= email %></p>
-                <p><%= message %></p>
+            <!-- OTP form -->
+            <form action="/forgot-otp" method="post">
+              <input type="hidden" name="email" value="<%= email %>"> <!-- Include email value -->
+              <div class="row g-4">
+                <div class="col-12">
+                  <label for="exampleName" class="form-label">Enter OTP</label>
+                  <input type="text" name="otp" class="form-control rounded-0" id="name">
+                </div>
+                <div class="col-12">
+                  <button type="submit" class="btn btn-dark rounded-0 btn-ecomm w-100">Submit</button>
+                </div>
+              </div><!---end row-->
+            </form>
   
-                <!-- OTP form -->
-                <form action="/forgot-otp" method="post">
-                  <input type="hidden" name="email" value="<%= email %>"> <!-- Include email value -->
-                  <div class="row g-4">
-                    <div class="col-12">
-                      <label for="exampleName" class="form-label">Enter OTP</label>
-                      <input type="text" name="otp" class="form-control rounded-0" id="name">
-                    </div>
-                    <div class="col-12">
-                      <button type="submit" class="btn btn-dark rounded-0 btn-ecomm w-100">Submit</button>
-                    </div>
-                  </div><!---end row-->
-                  
-                </form>
   
-                <!-- Resend OTP form (if needed) -->
-                <!--
-                <form action="resend" method="post" class="mb-1">
-                  <button type="submit" class="btn btn-dark rounded-0 btn-ecomm w-100">Resend OTP</button>
-                </form>
-                -->
-              </div>
-            </div>
+  
           </div>
-        </div><!--end row-->
+        </div>
       </div>
+    </div><!--end row-->
+  </div>
     </section>
   </div>
   
    
    <%- include('../userlayout/footer.ejs') %>
+
+   <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const otpForm = document.querySelector('form');
+      const otpInput = document.getElementById('name'); // Assuming the input has an id of 'name'
+    
+      otpForm.addEventListener('submit', function(event) {
+        // Prevent the default form submission
+        event.preventDefault();
+    
+        // Simple validation: Check if the OTP is numeric and has a minimum length
+        const otpRegex = /^\d{6}$/; // Example: expecting a 6-digit numeric OTP
+        if (!otpRegex.test(otpInput.value)) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Invalid OTP',
+            text: 'Please enter a valid 6-digit numeric OTP.',
+          });
+          return false;
+        }
+    
+        // If validation passes, proceed with form submission
+        this.submit();
+      });
+    });
+    </script>
+    

@@ -13,14 +13,9 @@ import flash from 'express-flash';
 import dotenv from 'dotenv';
 import session from 'express-session';
 dotenv.config();
-
-// Now you can access process.env.sessionSecret
-
-
-
-
 const app = express();
 const port = process.env.PORT || 5500;
+
 
 app.use(session({ 
   secret: process.env.sessionSecret,
@@ -40,19 +35,12 @@ app.use(cookieParser());
 app.set('view engine', 'ejs');
 app.set('views', ['./views/users', './views/admin']);
 
-// // Error handling middleware
-// app.use((err, req, res, next) => {
-//   console.error(err.stack);
-//   res.status(500).render('error', { message: 'Internal Server Error' });
-// });
 app.use((req, res, next) => {
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
   res.setHeader('Pragma', 'no-cache');
   res.setHeader('Expires', '0');
   next();
 });
-
-
 
 app.use('/', userRoute);
 app.use('/admin', adminRoute);
@@ -74,5 +62,4 @@ async function connectToMongoDB() {
 }
 
 connectToMongoDB(); 
-
 app.listen(port, () => console.log(`Listening to the server on http://localhost:${port}`));
