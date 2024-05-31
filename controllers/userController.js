@@ -8,9 +8,6 @@ import bannerModel from '../models/bannerModel.js';
 import bcrypt from 'bcrypt';
 import nodemailer from 'nodemailer';
 import Mailgen from 'mailgen';
-import Swal from 'sweetalert2';
-import { v4 as uuidv4 } from 'uuid';
-
 
 const securePassword = async (password) => {
   try {
