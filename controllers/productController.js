@@ -95,7 +95,6 @@ const addProduct = async (req, res) => {
           .resize({ width: 300, height: 300, fit: "contain" })
           .toBuffer();
 
-        // Generate a unique filename for each image
         const filename = `cropped_${req.files[i].originalname}_${Date.now()}`;
         arrImages[i] = filename;
 

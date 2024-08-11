@@ -1,5 +1,19 @@
 <%- include('../adminlayout/header.ejs') %>
 
+
+
+<style>
+  .banner-card {
+    width: 100%;
+    height: auto;
+    overflow: hidden;
+  }
+  .banner-card img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+</style>
 <div class="row">
   <div class="col-12">
     <div class="card mb-4">
@@ -51,18 +65,19 @@
           <div class="row">
             <% banners.forEach(function(banner) { %>
               <div class="col-md-4">
-                 <div class="card mb-4">
-                   <img src="/banners/<%= banner.image %>" class="card-img-top" alt="Banner Image" style="max-width: 100%; height: auto;">
-                   <div class="card-body">
-                     <h5 class="card-title"><%= banner.title %></h5>
-                     <p class="card-text"><%= banner.subtitle %></p>
-                     <p class="card-text"><small class="text-muted">Color: <%= banner.color %></small></p>
-                     <a href="/admin/banner/editbanner/<%= banner._id %>" class="btn btn-primary">Edit</a>
-                     <button type="button" class="btn btn-danger btn-delete" data-id="<%= banner._id %>">Delete</button>
-                   </div>
-                 </div>                 
+                <div class="card mb-4 banner-card"> <!-- Add the banner-card class here -->
+                  <img src="/banners/<%= banner.image %>" class="card-img-top" alt="Banner Image" style="object-fit: cover; max-width: 100%; height: auto;">
+                  <div class="card-body">
+                    <h5 class="card-title"><%= banner.title %></h5>
+                    <p class="card-text"><%= banner.subtitle %></p>
+                    <p class="card-text"><small class="text-muted">Color: <%= banner.color %></small></p>
+                    <a href="/admin/banner/editbanner/<%= banner._id %>" class="btn btn-primary">Edit</a>
+                    <button type="button" class="btn btn-danger btn-delete" data-id="<%= banner._id %>">Delete</button>
+                  </div>
+                </div>                 
               </div>
-             <% }); %>             
+            <% }); %>
+            
            </div>
         <% } else { %>
           <p>No banners available.</p>
@@ -166,3 +181,4 @@
  
  
 <%- include('../adminlayout/footer.ejs') %>
+
