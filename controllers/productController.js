@@ -98,7 +98,7 @@ const addProduct = async (req, res) => {
         const filename = `cropped_${req.files[i].originalname}_${Date.now()}`;
         arrImages[i] = filename;
 
-        // Save the cropped image
+  
         await sharp(croppedBuffer).toFile(`uploads/product/${filename}`);
       }
     }

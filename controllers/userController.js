@@ -28,8 +28,8 @@ const homeLoad = async (req, res) => {
     const banners = await bannerModel.find();
 
     const isLoggedIn = req.session.isLoggedIn;
-    const justLoggedInFromLoginPage = req.session.justLoggedInFromLoginPage || false; // Use this flag
-    req.session.justLoggedInFromLoginPage = false; // Reset it
+    const justLoggedInFromLoginPage = req.session.justLoggedInFromLoginPage || false;
+    req.session.justLoggedInFromLoginPage = false;
 
     const userId = req.session.userId;
     let userName = '';
