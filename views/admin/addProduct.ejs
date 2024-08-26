@@ -63,7 +63,7 @@
 
 <%- include('../adminlayout/footer.ejs') %>
 
-<!-- Add this script to your EJS file -->
+
 <script>
     document.getElementById('addProductForm').addEventListener('submit', function(event) {
         event.preventDefault();
@@ -76,18 +76,16 @@
         var stockCount = document.getElementById('stock_count');
         var productImg = document.getElementById('productImg');
         
-        // Reset error messages
+ 
         document.querySelectorAll('[id$="Error"]').forEach(error => {
             error.textContent = '';
         });
 
-        // Validate Product Name
         if(productName.value === '') {
             document.getElementById('productNameError').textContent = 'Product Name is required';
             return false;
         }
 
-        // Validate Description
         if(description.value === '') {
             document.getElementById('descriptionError').textContent = 'Description is required';
             return false;

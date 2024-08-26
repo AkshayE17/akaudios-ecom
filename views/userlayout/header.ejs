@@ -1,8 +1,6 @@
 <!doctype html>
 <html lang="en" class="dark-theme">
 
-
-<!-- Mirrored from codervent.com/shopingo/demo/shopingo_V1/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 14 Dec 2023 05:42:26 GMT -->
 <head>
   <!-- Required meta tags -->
   <meta charset="utf-8">
@@ -27,13 +25,13 @@
 <body>
 
      <!-- page loader-->
-     <!-- <div class="loader-wrapper">
+     <div class="loader-wrapper">
       <div class="d-flex justify-content-center align-items-center position-absolute top-50 start-50 translate-middle">
         <div class="spinner-border text-dark" role="status">
           <span class="visually-hidden">Loading...</span>
         </div>
       </div>
-    </div>  -->
+    </div> 
    <!--end loader -->
 
   <!--start top header-->
@@ -64,7 +62,7 @@
               </a>
               <ul class="dropdown-menu">
                   <% categories.forEach(category => { %>
-                      <li><a class="dropdown-item" href="#"><%= category.categoryName %></a></li>
+                      <li><a class="dropdown-item" href="/productfilter"><%= category.categoryName %></a></li>
                   <% }); %>
               </ul>
           </li>
