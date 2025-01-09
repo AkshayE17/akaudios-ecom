@@ -77,7 +77,7 @@ const loadRegister = async (req, res) => {
  var otp;
  
  const otpgenerator = () => {
-   otp = Math.floor(100000 + Math.random() * 900000); // Ensures a 6-digit number
+   otp = Math.floor(100000 + Math.random() * 900000);
    console.log(otp);
  };
  
